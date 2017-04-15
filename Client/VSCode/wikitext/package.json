@@ -3,15 +3,18 @@
     "displayName": "Wikitext",
     "description": "",
     "version": "0.0.1",
-    "publisher": "siamchen",
+    "publisher": "cxuesong",
     "engines": {
         "vscode": "^1.11.0"
     },
     "categories": [
-        "Other"
+        "Languages",
+        "Linters"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.sayHello",
+        "onLanguage:mediawiki",
+        "onLanguage:wikitext"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -43,6 +46,9 @@
             }
         }
     },
+    "extensionDependencies": [
+        "jakeboone02.mediawiki"
+    ],
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
         "compile": "tsc -watch -p ./",
