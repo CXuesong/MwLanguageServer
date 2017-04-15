@@ -1,26 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Serilog;
+using Serilog.Core;
+using VSCode;
+using VSCode.Editor;
 
 namespace MwLanguageServer
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .Build();
-
-            host.Run();
+            using (var logWriter = File.CreateText("MwLanguageServer-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".log"))
+            using (var server = new LanguageServer())
+            {
+                var logger = new LoggerConfiguration().WriteTo.TextWriter(logWriter)
+                    .CreateLogger();
+                try
+                {
+                    server.Start();
+                    server.WaitForState(LanguageServerState.Started);
+                    server.Editor.ShowMessage(MessageType.Info, "Hello from .NET!");
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e, "Critial exception.");
+                }
+            }
         }
     }
 }

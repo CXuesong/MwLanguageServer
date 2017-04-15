@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MwLanguageServer", "MwLanguageServer\MwLanguageServer.csproj", "{C23654B1-7966-4A46-AFF6-BCE5DE455D21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MwLanguageServer", "MwLanguageServer\MwLanguageServer.csproj", "{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C23654B1-7966-4A46-AFF6-BCE5DE455D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C23654B1-7966-4A46-AFF6-BCE5DE455D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C23654B1-7966-4A46-AFF6-BCE5DE455D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C23654B1-7966-4A46-AFF6-BCE5DE455D21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
