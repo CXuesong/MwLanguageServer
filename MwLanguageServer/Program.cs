@@ -1,32 +1,178 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Threading;
+using Autofac;
+using JsonRpc.Standard;
+using JsonRpc.Standard.Client;
+using JsonRpc.Standard.Contracts;
+using JsonRpc.Standard.Dataflow;
+using JsonRpc.Standard.Server;
+using LanguageServer.VsCode;
+using LanguageServer.VsCode.Contracts.Client;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
-using VSCode;
-using VSCode.Editor;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
+using ISerilogLogger = Serilog.ILogger;
 
 namespace MwLanguageServer
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static readonly IJsonRpcContractResolver myContractResolver = new JsonRpcContractResolver
         {
-            using (var logWriter = File.CreateText("MwLanguageServer-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".log"))
-            using (var server = new LanguageServer())
+            // Use camelcase for RPC method names.
+            NamingStrategy = new CamelCaseJsonRpcNamingStrategy(),
+            // Use camelcase for the property names in parameter value objects
+            ParameterValueConverter = new CamelCaseJsonValueConverter()
+        };
+
+        public static void Main(string[] args)
+        {
+            var builder = new ContainerBuilder();
+            ConfigureContainer(builder);
+            using (var container = builder.Build())
             {
-                var logger = new LoggerConfiguration().WriteTo.TextWriter(logWriter)
-                    .CreateLogger();
-                try
+#if DEBUG
+                if (container.Resolve<ApplicationConfiguration>().WaitForDebugger)
                 {
-                    server.Start();
-                    server.WaitForState(LanguageServerState.Started);
-                    server.Editor.ShowMessage(MessageType.Info, "Hello from .NET!");
+                    while (!Debugger.IsAttached) Thread.Sleep(1000);
+                    Debugger.Break();
                 }
-                catch (Exception e)
+#endif
+                var logger = container.Resolve<ILoggerFactory>().CreateLogger("Application");
+                logger.LogInformation("Start logging.");
+                logger.LogInformation("Arguments: {arguments}", (object) args);
+                var serviceHost = container.Resolve<IJsonRpcServiceHost>();
+                var lifetime = container.Resolve<ServiceHostLifetime>();
+                using (lifetime.CancellationToken.Register(
+                    () => container.Resolve<ConsoleIoService>().ConsoleMessageSource.Complete()))
                 {
-                    logger.Error(e, "Critial exception.");
+                    lifetime.CancellationToken.WaitHandle.WaitOne();
                 }
+                logger.LogInformation("Stop logging.");
             }
+        }
+
+        private static void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Logging
+            builder.Register(ctx =>
+                {
+                    var writer =
+                        File.CreateText("MwLanguageServer-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".log");
+                    writer.AutoFlush = true;
+                    return writer;
+                })
+                .Named<TextWriter>("LoggerTextWriter");
+            builder.Register<ISerilogLogger>(ctx => new LoggerConfiguration()
+                    .Destructure.AsScalar<RequestMessage>()
+                    .Destructure.AsScalar<ResponseMessage>()
+                    .MinimumLevel.Is(ctx.Resolve<ApplicationConfiguration>().Debug
+                        ? LogEventLevel.Verbose
+                        : LogEventLevel.Debug)
+                    .WriteTo
+                    .TextWriter(new SynchronizedTextWriter(ctx.ResolveNamed<TextWriter>("LoggerTextWriter")),
+                        outputTemplate:
+                        "{Timestamp:HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}")
+#if DEBUG
+                    .WriteTo.Trace(outputTemplate:
+                        "{Timestamp:HH:mm:ss} [{Level}] {SourceContext} {Message}{NewLine}{Exception}")
+#endif
+                    .CreateLogger())
+                .SingleInstance();
+            builder.Register<ILoggerFactory>(ctx =>
+                {
+                    var lf = new LoggerFactory();
+                    lf.AddSerilog(ctx.Resolve<ISerilogLogger>());
+                    return lf;
+                }
+            );
+            // Configuration
+            builder.Register<IConfiguration>(ctx => new ConfigurationBuilder().AddJsonFile("config.json")
+                    .AddCommandLine(Utility.ProcessCommandlineArguments(Environment.GetCommandLineArgs().Skip(1)),
+                        new Dictionary<string, string>
+                        {
+                            ["--debug"] = "Application:Debug",
+                            ["--manual"] = "Application:Manual",
+                            ["--waitForDebugger"] = "Application:WaitForDebugger",
+                        })
+                    .Build())
+                .SingleInstance();
+            builder.Register(ctx => ctx.Resolve<IConfiguration>()
+                .GetSection("Application")
+                .Get<ApplicationConfiguration>());
+            // JSON RPC Client
+            builder.Register(ctx => new ConsoleIoService(ctx.Resolve<ApplicationConfiguration>().Manual))
+                .SingleInstance();
+            builder.Register(RpcClientFactory).SingleInstance();
+            builder.Register(ctx => new JsonRpcProxyBuilder {ContractResolver = myContractResolver})
+                .SingleInstance();
+            builder.RegisterType<ClientProxy>().SingleInstance();
+            // JSON RPC Server
+            builder.RegisterType<ServiceHostLifetime>().SingleInstance();
+            builder.Register(ServiceHostFactory).SingleInstance();
+            // JSON RPC Services
+            foreach (var t in typeof(Program).GetTypeInfo()
+                .Assembly.ExportedTypes
+                .Where(t => t.IsAssignableTo<JsonRpcService>()))
+                builder.RegisterType(t);
+        }
+
+        private static JsonRpcClient RpcClientFactory(IComponentContext context)
+        {
+            var cio = context.Resolve<ConsoleIoService>();
+            var client = new JsonRpcClient();
+            client.Attach(cio.ConsoleMessageSource, cio.ConsoleMessageTarget);
+            if (context.Resolve<ApplicationConfiguration>().Debug)
+            {
+                var logger = context.Resolve<ILoggerFactory>().CreateLogger("CLIENT");
+                client.MessageSending += (_, e) =>
+                {
+                    logger.LogTrace("< {@Request}", e.Message);
+                };
+                client.MessageReceiving += (_, e) =>
+                {
+                    logger.LogTrace("> {@Response}", e.Message);
+                };
+            }
+            return client;
+        }
+
+        private static IJsonRpcServiceHost ServiceHostFactory(IComponentContext context)
+        {
+            var builder = new ServiceHostBuilder
+            {
+                ContractResolver = myContractResolver,
+                Session = new LanguageServerSession(myContractResolver),
+                Options = JsonRpcServiceHostOptions.ConsistentResponseSequence,
+                LoggerFactory = context.Resolve<ILoggerFactory>(),
+                ServiceFactory = new AutofacServiceFactory(context.Resolve<ILifetimeScope>())
+            };
+            builder.Register(typeof(Program).GetTypeInfo().Assembly);
+            builder.UseCancellationHandling();
+            if (context.Resolve<ApplicationConfiguration>().Debug)
+            {
+                var logger = context.Resolve<ILoggerFactory>().CreateLogger("SERVER");
+                // Log all the client-to-server calls.
+                builder.Intercept(async (ctx, next) =>
+                {
+                    logger.LogTrace("> {@Request}", ctx.Request);
+                    await next();
+                    logger.LogTrace("< {@Response}", ctx.Response);
+                });
+            }
+            var host = builder.Build();
+            var cio = context.Resolve<ConsoleIoService>();
+            host.Attach(cio.ConsoleMessageSource, cio.ConsoleMessageTarget);
+            return host;
         }
     }
 }

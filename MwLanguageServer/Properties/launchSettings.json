@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MwLanguageServer": {
+      "commandName": "Project",
+      "commandLineArgs": "--manual"
+    }
+  }
+}

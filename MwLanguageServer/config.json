@@ -1,0 +1,7 @@
+{
+  "Application": {
+    "Debug": false,
+    "Manual": false,
+    "WaitForDebugger": false
+  }
+}
