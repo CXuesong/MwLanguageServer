@@ -13,7 +13,7 @@ const languageServerPaths = [
 ]
 
 function activateLanguageServer(context: vscode.ExtensionContext) {
-	// The server is implemented in node
+	// The server is implemented in an executable application.
 	let serverModule: string = null;
 	for (let p of languageServerPaths)
 	{
@@ -40,7 +40,7 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: languageClient.LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: ["plaintext"],
+		documentSelector: ["wikitext", "mediawiki"],
 		synchronize: {
 			// Synchronize the setting section 'languageServerExample' to the server
 			configurationSection: 'wikitextLanguageServer',
@@ -50,7 +50,8 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 	}
 
 	// Create the language client and start the client.
-	let disposable = new languageClient.LanguageClient('wikitextLanguageServer', 'Wikitext Language Server', serverOptions, clientOptions).start();
+	let client = new languageClient.LanguageClient('wikitextLanguageServer', 'Wikitext Language Server', serverOptions, clientOptions);
+	let disposable = client.start();
 
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
