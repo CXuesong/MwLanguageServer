@@ -16,6 +16,7 @@ using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MwLanguageServer.Services;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -119,11 +120,18 @@ namespace MwLanguageServer
             // JSON RPC Server
             builder.RegisterType<ServiceHostLifetime>().SingleInstance();
             builder.Register(ServiceHostFactory).SingleInstance();
+            builder.RegisterType<SessionStateManager>().SingleInstance();
+            builder.RegisterType<SessionState>();
             // JSON RPC Services
             foreach (var t in typeof(Program).GetTypeInfo()
                 .Assembly.ExportedTypes
                 .Where(t => t.IsAssignableTo<JsonRpcService>()))
-                builder.RegisterType(t);
+            {
+                var rb = builder.RegisterType(t);
+                if (t.IsAssignableTo<LanguageServiceBase>())
+                    rb.OnActivated(e => ((LanguageServiceBase) e.Instance).StateManager =
+                        e.Context.Resolve<SessionStateManager>());
+            }
         }
 
         private static JsonRpcClient RpcClientFactory(IComponentContext context)
@@ -151,7 +159,7 @@ namespace MwLanguageServer
             var builder = new ServiceHostBuilder
             {
                 ContractResolver = myContractResolver,
-                Session = new LanguageServerSession(myContractResolver),
+                Session = new Session(),
                 Options = JsonRpcServiceHostOptions.ConsistentResponseSequence,
                 LoggerFactory = context.Resolve<ILoggerFactory>(),
                 ServiceFactory = new AutofacServiceFactory(context.Resolve<ILifetimeScope>())

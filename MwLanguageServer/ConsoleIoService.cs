@@ -11,6 +11,8 @@ namespace MwLanguageServer
 {
     public sealed class ConsoleIoService : IDisposable
     {
+        /// <param name="manualIo">Simply read messages from console, line by line,
+        /// instead of using language server protocol's specification.</param>
         public ConsoleIoService(bool manualIo)
         {
             if (manualIo)

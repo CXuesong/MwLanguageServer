@@ -8,6 +8,10 @@ namespace MwLanguageServer
     {
         public bool Debug { get; set; }
 
+        /// <summary>
+        /// Whether to simply read messages from console, line by line,
+        /// instead of using language server protocol's specification.
+        /// </summary>
         public bool Manual { get; set; }
 
         public bool WaitForDebugger { get; set; }

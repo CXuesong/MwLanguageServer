@@ -19,13 +19,12 @@ namespace MwLanguageServer.Services
         }
 
         [JsonRpcMethod(IsNotification = true)]
-        public async Task DidChangeConfiguration(SettingsRoot settings)
+        public void DidChangeConfiguration(SettingsRoot settings)
         {
             Session.Settings = settings.WikitextLanguageServer;
-            foreach (var doc in Session.Documents)
+            foreach (var doc in Session.DocumentStates.Values)
             {
-                var diag = Session.DiagnosticProvider.LintDocument(doc, Session.Settings.MaxNumberOfProblems);
-                await client.Document.PublishDiagnostics(doc.Uri, diag);
+                doc.RequestLint();
             }
         }
 
@@ -42,7 +41,7 @@ namespace MwLanguageServer.Services
                     // Note that pass null to PublishDiagnostics may mess up the client.
                     if (change.Type == FileChangeType.Deleted)
                     {
-                        await client.Document.PublishDiagnostics(change.Uri, new Diagnostic[0]);
+                        await client.Document.PublishDiagnostics(change.Uri, Diagnostic.EmptyDiagnostics);
                     }
                 }
             }

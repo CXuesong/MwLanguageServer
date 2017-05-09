@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
@@ -12,11 +13,10 @@ namespace MwLanguageServer.Services
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : LanguageServiceBase
     {
-        private readonly ClientProxy client;
 
-        public TextDocumentService(ClientProxy client)
+        public TextDocumentService()
         {
-            this.client = client;
+
         }
 
         [JsonRpcMethod]
@@ -28,41 +28,35 @@ namespace MwLanguageServer.Services
         }
 
         [JsonRpcMethod(IsNotification = true)]
-        public async Task DidOpen(TextDocumentItem textDocument)
+        public void DidOpen(TextDocumentItem textDocument)
         {
-            var doc = TextDocument.Load<FullTextDocument>(textDocument);
-            Documents.Add(doc);
-            var diag = Session.DiagnosticProvider.LintDocument(doc, Session.Settings.MaxNumberOfProblems);
-            await client.Document.PublishDiagnostics(doc.Uri, diag);
+            var doc = new DocumentState(TextDocument.Load<FullTextDocument>(textDocument), Session.WikitextLinter);
+            Session.DocumentStates[textDocument.Uri] = doc;
+            Session.Attach(doc);
+            doc.RequestLint();
         }
 
         [JsonRpcMethod(IsNotification = true)]
-        public async Task DidChange(TextDocumentIdentifier textDocument,
+        public void DidChange(TextDocumentIdentifier textDocument,
             ICollection<TextDocumentContentChangeEvent> contentChanges)
         {
-            var doc = Documents[textDocument];
-            doc.ApplyChanges(contentChanges);
-            //await Client.Window.LogMessage(MessageType.Log, "-----------");
-            //await Client.Window.LogMessage(MessageType.Log, doc.Content);
-            var diag = Session.DiagnosticProvider.LintDocument(doc, Session.Settings.MaxNumberOfProblems);
-            await client.Document.PublishDiagnostics(doc.Uri, diag);
+            Session.DocumentStates[textDocument.Uri].NotifyChanges(contentChanges);
         }
 
         [JsonRpcMethod(IsNotification = true)]
         public void WillSave(TextDocumentIdentifier textDocument, TextDocumentSaveReason reason)
         {
-            //Client.Window.LogMessage(MessageType.Log, "-----------");
-            //Client.Window.LogMessage(MessageType.Log, Documents[textDocument].Content);
+
         }
 
         [JsonRpcMethod(IsNotification = true)]
         public async Task DidClose(TextDocumentIdentifier textDocument)
         {
+            Session.RemoveDocument(textDocument.Uri);
             if (textDocument.Uri.IsUntitled())
             {
-                await client.Document.PublishDiagnostics(textDocument.Uri, new Diagnostic[0]);
+                await Session.ClientProxy.Document.PublishDiagnostics(textDocument.Uri, Diagnostic.EmptyDiagnostics);
             }
-            Documents.Remove(textDocument);
         }
 
         private static readonly CompletionItem[] PredefinedCompletionItems =

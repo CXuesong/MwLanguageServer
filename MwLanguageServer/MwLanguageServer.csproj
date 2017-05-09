@@ -6,6 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Linter\_private\**" />
+    <Compile Remove="_private\**" />
+    <EmbeddedResource Remove="Linter\_private\**" />
+    <EmbeddedResource Remove="_private\**" />
+    <None Remove="Linter\_private\**" />
+    <None Remove="_private\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -13,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.5.0" />
-    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.1.0-int1" />
+    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.1.1-int1" />
     <PackageReference Include="CXuesong.MW.MwParserFromScratch" Version="0.1.0-int4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.1" />
