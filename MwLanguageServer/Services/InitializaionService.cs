@@ -39,7 +39,7 @@ namespace MwLanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public void Initialized()
         {
-            
+
         }
 
         [JsonRpcMethod]

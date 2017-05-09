@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using LanguageServer.VsCode.Contracts;
+using MwLanguageServer.Localizable;
 
 namespace MwLanguageServer.Linter
 {
@@ -11,8 +12,7 @@ namespace MwLanguageServer.Linter
 
         public Diagnostic OpenTagClosedByEndOfLine(Range range)
         {
-            return new Diagnostic(DiagnosticSeverity.Warning, range, SourceName,
-                "Open tag is implicitly closed by end of line.");
+            return new Diagnostic(DiagnosticSeverity.Warning, range, SourceName, Diagnostics.OpenTagClosedByEndOfLine);
         }
     }
 }
