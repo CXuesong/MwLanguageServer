@@ -13,6 +13,7 @@ using JsonRpc.Standard.Server;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Contracts.Client;
 using LanguageServer.VsCode.Server;
+using Microsoft.Extensions.Logging;
 using MwLanguageServer.Linter;
 using MwParserFromScratch;
 using MwParserFromScratch.Nodes;
@@ -27,7 +28,6 @@ namespace MwLanguageServer
             if (clientProxy == null) throw new ArgumentNullException(nameof(clientProxy));
             ClientProxy = clientProxy;
             DocumentStates = new ConcurrentDictionary<Uri, DocumentState>();
-            WikitextLinter = new WikitextLinter(new WikitextParser());
         }
 
         public ClientProxy ClientProxy { get; }
@@ -36,10 +36,9 @@ namespace MwLanguageServer
 
         public LanguageServerSettings Settings { get; set; } = new LanguageServerSettings();
 
-        public WikitextLinter WikitextLinter { get; }
-
         public void Attach(DocumentState doc)
         {
+            doc.DocumentChanged += DocumentState_DocumentChanged;
             doc.DocumentLinted += DocumentState_DocumentLinted;
         }
 
@@ -55,7 +54,14 @@ namespace MwLanguageServer
 
         public void Detach(DocumentState doc)
         {
+            doc.DocumentChanged -= DocumentState_DocumentChanged;
             doc.DocumentLinted -= DocumentState_DocumentLinted;
+        }
+
+        private void DocumentState_DocumentChanged(object sender, EventArgs e)
+        {
+            var d = (DocumentState)sender;
+            d.RequestLint();
         }
 
         private void DocumentState_DocumentLinted(object sender, EventArgs args)
@@ -96,12 +102,13 @@ namespace MwLanguageServer
     public class DocumentState
     {
 
-        public DocumentState(TextDocument doc, WikitextLinter linter)
+        public DocumentState(TextDocument doc, ILoggerFactory loggerFactory)
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
-            if (linter == null) throw new ArgumentNullException(nameof(linter));
+            if (loggerFactory == null) throw new ArgumentNullException(nameof(loggerFactory));
+            Logger = loggerFactory.CreateLogger<DocumentState>();
             TextDocument = doc;
-            WikitextLinter = linter;
+            WikitextLinter = new WikitextLinter(new WikitextParser());
             DocumentLinter = new TextDocumentLinter(this);
             Synchronizer = new TextDocumentSynchronizer(this);
             DocumentLinter = new TextDocumentLinter(this);
@@ -117,11 +124,13 @@ namespace MwLanguageServer
 
         public TextDocument TextDocument { get; private set; }
 
+        private readonly ILogger Logger;
+
         private readonly TextDocumentSynchronizer Synchronizer;
 
         private readonly TextDocumentLinter DocumentLinter;     // A WikitextLinter with delay
 
-        private readonly WikitextLinter WikitextLinter;
+        private readonly WikitextLinter WikitextLinter;         // Not thread-safe
 
         public void NotifyChanges(IEnumerable<TextDocumentContentChangeEvent> changes)
         {
@@ -204,6 +213,7 @@ namespace MwLanguageServer
                             if (localChanges == null || localChanges.Count == 0) return;
                             impendingChanges = null;
                         }
+                        Owner.Logger.LogDebug(0, "Making changes to {document}.", Owner.TextDocument.Uri);
                         // Make the changes.
                         var doc = Owner.TextDocument.ApplyChanges(localChanges);
                         Owner.TextDocument = doc;
@@ -220,9 +230,14 @@ namespace MwLanguageServer
                         Owner.OnDocumentChanged();
                     }
                 }
+                catch (Exception ex)
+                {
+                    Owner.Logger.LogError(0, ex, "Error making changes to {document}.", Owner.TextDocument.Uri);
+                }
                 finally
                 {
                     Monitor.Exit(makeChangesLock);
+                    Owner.Logger.LogDebug(0, "Finished making changes to {document}.", Owner.TextDocument.Uri);
                 }
             }
         }
@@ -265,8 +280,10 @@ namespace MwLanguageServer
                 if (!Monitor.TryEnter(lintLock)) return;
                 try
                 {
+                    Interlocked.Exchange(ref willLint, 0);
                     while (Interlocked.Exchange(ref impendingRequests, 0) > 0)
                     {
+                        Owner.Logger.LogDebug(0, "Start linting {document}.", Owner.TextDocument.Uri);
                         var doc = Owner.TextDocument;
                         var linted = Owner.WikitextLinter.Lint(doc);
                         // document has been changed!
@@ -276,9 +293,14 @@ namespace MwLanguageServer
                         Owner.OnDocumentLinted();
                     }
                 }
+                catch (Exception ex)
+                {
+                    Owner.Logger.LogError(0, ex, "Error linting {document}.", Owner.TextDocument.Uri);
+                }
                 finally
                 {
                     Monitor.Exit(lintLock);
+                    Owner.Logger.LogDebug(0, "Finished linting {document}.", Owner.TextDocument.Uri);
                 }
             }
         }

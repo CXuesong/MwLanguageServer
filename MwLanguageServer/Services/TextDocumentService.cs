@@ -7,16 +7,18 @@ using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Contracts.Client;
 using LanguageServer.VsCode.Server;
+using Microsoft.Extensions.Logging;
 
 namespace MwLanguageServer.Services
 {
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : LanguageServiceBase
     {
+        private readonly ILoggerFactory loggerFactory;
 
-        public TextDocumentService()
+        public TextDocumentService(ILoggerFactory loggerFactory)
         {
-
+            this.loggerFactory = loggerFactory;
         }
 
         [JsonRpcMethod]
@@ -30,7 +32,7 @@ namespace MwLanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public void DidOpen(TextDocumentItem textDocument)
         {
-            var doc = new DocumentState(TextDocument.Load<FullTextDocument>(textDocument), Session.WikitextLinter);
+            var doc = new DocumentState(TextDocument.Load<FullTextDocument>(textDocument), loggerFactory);
             Session.DocumentStates[textDocument.Uri] = doc;
             Session.Attach(doc);
             doc.RequestLint();
