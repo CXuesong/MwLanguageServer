@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.5.0" />
-    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.1.1-int1" />
-    <PackageReference Include="CXuesong.MW.MwParserFromScratch" Version="0.1.0-int4" />
+    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.1.1" />
+    <PackageReference Include="CXuesong.MW.MwParserFromScratch" Version="0.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="1.1.1" />
@@ -43,6 +43,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Diagnostics.resx</DependentUpon>
     </Compile>
+    <Compile Update="Localizable\Prompts.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Prompts.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +57,10 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Localizable\Diagnostics.zh-Hans.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localizable\Prompts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Prompts.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

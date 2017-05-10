@@ -24,9 +24,8 @@ namespace MwLanguageServer.Services
         [JsonRpcMethod]
         public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
-            // Note that Hover is cancellable.
-            await Task.Delay(1000, ct);
-            return new Hover {Contents = "Test _hover_ @" + position + "\n\n" + textDocument};
+            var doc = Session.DocumentStates[textDocument.Uri];
+            return doc.LintedDocument.GetHover(position, doc.TextDocument);
         }
 
         [JsonRpcMethod(IsNotification = true)]
