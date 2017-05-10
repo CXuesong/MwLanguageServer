@@ -113,6 +113,7 @@ namespace MwLanguageServer
                     break;
                 case Comment c:
                     label = "&lt;!-- … --&gt;";
+                    break;
                 default:
                     label = node.GetType().Name;
                     break;
