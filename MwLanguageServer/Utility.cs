@@ -53,6 +53,19 @@ namespace MwLanguageServer
             return null;
         }
 
+        public static int IndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+            int index = 0;
+            foreach (var i in source)
+            {
+                if (predicate(i)) return index;
+                index++;
+            }
+            return -1;
+        }
+
         public static string EscapeMd(string text)
         {
             if (string.IsNullOrEmpty(text)) return "";

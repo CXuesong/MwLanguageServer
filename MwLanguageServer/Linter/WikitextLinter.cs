@@ -41,7 +41,7 @@ namespace MwLanguageServer.Linter
             var diag = new List<Diagnostic>();
             diag.AddRange(CheckMatchingPairs(ast));
             diag.AddRange(CheckDuplicateArguments(ast));
-            return new LintedWikitextDocument(ast, diag);
+            return new LintedWikitextDocument(doc, ast, diag);
         }
 
         private static readonly char[] newLineCharacters = {'\r', '\n'};

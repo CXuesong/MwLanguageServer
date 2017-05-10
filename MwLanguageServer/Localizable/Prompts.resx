@@ -136,8 +136,11 @@
   <data name="TemplateArgumentNode" xml:space="preserve">
     <value>Template Argument</value>
   </data>
+  <data name="TemplateMagicNode" xml:space="preserve">
+    <value>Magic Word</value>
+  </data>
   <data name="TemplateNode" xml:space="preserve">
-    <value>Template</value>
+    <value>Template Transclusion</value>
   </data>
   <data name="WikiLinkNode" xml:space="preserve">
     <value>Wiki Link</value>

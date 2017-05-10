@@ -22,10 +22,17 @@ namespace MwLanguageServer.Services
         }
 
         [JsonRpcMethod]
-        public async Task<Hover> Hover(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
+        public Hover Hover(TextDocumentIdentifier textDocument, Position position)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
-            return doc.LintedDocument.GetHover(position, doc.TextDocument);
+            return doc.LintedDocument.GetHover(position);
+        }
+
+        [JsonRpcMethod]
+        public SignatureHelp SignatureHelp(TextDocumentIdentifier textDocument, Position position)
+        {
+            var doc = Session.DocumentStates[textDocument.Uri];
+            return doc.LintedDocument.GetSignatureHelp(position);
         }
 
         [JsonRpcMethod(IsNotification = true)]

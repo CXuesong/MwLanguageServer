@@ -116,7 +116,16 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
-        ///   查找类似 Template 的本地化字符串。
+        ///   查找类似 Magic Word 的本地化字符串。
+        /// </summary>
+        internal static string TemplateMagicNode {
+            get {
+                return ResourceManager.GetString("TemplateMagicNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Template Transclusion 的本地化字符串。
         /// </summary>
         internal static string TemplateNode {
             get {
