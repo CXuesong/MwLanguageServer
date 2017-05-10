@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -38,42 +39,85 @@ namespace MwLanguageServer
                 .ToArray();
         }
 
+        public static string ArgumentName(this TemplateArgument arg)
+        {
+            if (arg.Name != null) return MwParserUtility.NormalizeTemplateArgumentName(arg.Name);
+            var parent = arg.ParentNode as Template;
+            if (parent == null) return null;
+            var unnamedCt = 0;
+            foreach (var a in parent.Arguments)
+            {
+                if (a.Name == null) unnamedCt++;
+                if (a == arg) return unnamedCt.ToString();
+            }
+            return null;
+        }
+
+        public static string EscapeMd(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+            var builder = new StringBuilder(text.Length);
+            foreach (var c in text)
+            {
+                if (c == '*' || c == '_' || c == '`' || c == '\\')
+                    builder.Append('\\');
+                builder.Append(c);
+            }
+            return builder.ToString();
+        }
+
+        private static string WikiTitleMd(Node node)
+        {
+            IWikitextSpanInfo span = node;
+            if (node == null || span.HasSpanInfo && span.Length == 0) return "…";
+            return EscapeMd(MwParserUtility.NormalizeTitle(node));
+        }
+
+        private static string WikiArgumentMd(Node node)
+        {
+            IWikitextSpanInfo span = node;
+            if (node == null || span.HasSpanInfo && span.Length == 0) return "…";
+            return EscapeMd(MwParserUtility.NormalizeTemplateArgumentName(node));
+        }
+
         public static string NodeToMd(Node node)
         {
-            string type = null, label = null;
+            string label;
             switch (node)
             {
                 case Template t:
-                    type = Prompts.TemplateNode;
-                    label = t.Name == null ? null : MwParserUtility.NormalizeTemplateArgumentName(t.Name);
+                    label = $"{{{{**{WikiTitleMd(t.Name)}**}}}}";
                     break;
                 case TemplateArgument ta:
-                    type = Prompts.TemplateArgumentNode;
-                    label = ta.Name?.ToPlainText().Trim();
+                    var tp = ta.ParentNode as Template;
+                    label = $"{{{{{WikiTitleMd(tp?.Name)} | **{EscapeMd(ta.ArgumentName())}**=…}}}}";
                     break;
                 case ArgumentReference ar:
-                    type = Prompts.TemplateArgumentNode;
-                    label = ar.Name?.ToPlainText().Trim();
+                    label = $"{{{{{{**{WikiArgumentMd(ar.Name)}**}}}}}}";
                     break;
                 case WikiLink wl:
-                    type = Prompts.WikiLinkNode;
-                    label = wl.Target == null ? null : MwParserUtility.NormalizeTitle(wl.Target);
+                    label = $"[[{WikiTitleMd(wl.Target)}]]";
                     break;
                 case ExternalLink el:
-                    type = Prompts.ExternalLinkNode;
-                    label = el.Target?.ToPlainText().Trim();
+                    label = $"[{EscapeMd(el.Target?.ToString().Trim())}]";
                     break;
                 case FormatSwitch fs:
-                    type = Prompts.FormatSwitchNode;
-                    if (fs.SwitchBold) label = Prompts.Bold;
-                    if (fs.SwitchItalics) label += " " + Prompts.Italics;
+                    label = fs.ToString();
                     break;
+                case TagNode tn:
+                    label = $"&lt;**{EscapeMd(tn.Name)}**&gt;";
+                    break;
+                case TagAttribute ta:
+                    var tap = ta.ParentNode as TagNode;
+                    label = $"&lt;{EscapeMd(tap?.Name?.Trim())} **{EscapeMd(ta.Name?.ToString().Trim())}**=… &gt;";
+                    break;
+                case Comment c:
+                    label = "&lt;!-- … --&gt;";
                 default:
-                    type = node.GetType().Name;
+                    label = node.GetType().Name;
                     break;
             }
-            if (label == null) return "**" + type + "**";
-            return $"**{type}** {label}";
+            return label;
         }
     }
 }

@@ -54,8 +54,8 @@ namespace MwLanguageServer.Linter
                 Debug.Assert(span.HasSpanInfo);
                 if (offset > span.Start && offset < span.Start + span.Length)
                 {
-                    TraceNode(node, offset, trace);
                     trace.Nodes.Add(node);
+                    TraceNode(node, offset, trace);
                     return;
                 }
             }
@@ -63,7 +63,7 @@ namespace MwLanguageServer.Linter
 
         private class AstTrace
         {
-            // From innermost to outermost
+            // From outermost to innermost
             public IList<Node> Nodes { get; } = new List<Node>();
 
             public Hover BuildHover(TextDocument doc)
@@ -73,18 +73,28 @@ namespace MwLanguageServer.Linter
                 IWikitextSpanInfo focusNode = null;
                 for (int i = 0; i < Nodes.Count; i++)
                 {
-                    
+
                     switch (Nodes[i])
                     {
-                        case Template t:
+                        case Template _:
+                            if (i + 1 < Nodes.Count && Nodes[i + 1] is TemplateArgument)
+                                continue; // We will show template name in NodeToMd(TemplateArgument)
+                            goto SHOW_NODE;
+                        case TagNode _:
+                            if (i + 1 < Nodes.Count && Nodes[i + 1] is TagNode)
+                                continue; // We will show template name in NodeToMd(TagAttribute)
+                            goto SHOW_NODE;
                         case TemplateArgument _:
                         case ArgumentReference _:
                         case WikiLink _:
                         case ExternalLink _:
                         case FormatSwitch _:
-                            if (focusNode == null) focusNode = Nodes[i];
-                            contentBuilder.AppendLine(Utility.NodeToMd(Nodes[i]));
-                            contentBuilder.AppendLine();
+                        case TagAttribute _:
+                        case Comment _:
+                            SHOW_NODE:
+                            focusNode = Nodes[i];
+                            if (contentBuilder.Length > 0) contentBuilder.Append(" → ");
+                            contentBuilder.Append(Utility.NodeToMd(Nodes[i]));
                             break;
                     }
                 }
