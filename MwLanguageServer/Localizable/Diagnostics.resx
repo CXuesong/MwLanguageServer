@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DuplicateTagAttribute" xml:space="preserve">
+    <value>Duplate tag attribute "{0}" in "{1}".</value>
+  </data>
+  <data name="DuplicateTemplateArgument" xml:space="preserve">
+    <value>Duplicate template argument "{0}" in "{1}".</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>Open tag is implicitly closed by end of line.</value>
   </data>

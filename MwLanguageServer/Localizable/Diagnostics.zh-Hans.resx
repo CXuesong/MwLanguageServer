@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DuplicateTagAttribute" xml:space="preserve">
+    <value>重复的标签特性：“{1}”中的“{0}”。</value>
+  </data>
+  <data name="DuplicateTemplateArgument" xml:space="preserve">
+    <value>重复的模板参数：“{1}”中的“{0}”。</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>起始标记被行尾隐式结束。</value>
   </data>

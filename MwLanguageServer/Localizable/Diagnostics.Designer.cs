@@ -62,6 +62,24 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似 Duplate tag attribute &quot;{0}&quot; in &quot;{1}&quot;. 的本地化字符串。
+        /// </summary>
+        internal static string DuplicateTagAttribute {
+            get {
+                return ResourceManager.GetString("DuplicateTagAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Duplicate template argument &quot;{0}&quot; in &quot;{1}&quot;. 的本地化字符串。
+        /// </summary>
+        internal static string DuplicateTemplateArgument {
+            get {
+                return ResourceManager.GetString("DuplicateTemplateArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Open tag is implicitly closed by end of line. 的本地化字符串。
         /// </summary>
         internal static string OpenTagClosedByEndOfLine {

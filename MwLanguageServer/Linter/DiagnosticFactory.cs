@@ -14,5 +14,17 @@ namespace MwLanguageServer.Linter
         {
             return new Diagnostic(DiagnosticSeverity.Warning, range, SourceName, Diagnostics.OpenTagClosedByEndOfLine);
         }
+
+        public Diagnostic DuplicateTemplateArgument(Range range, string name, string templateName)
+        {
+            return new Diagnostic(DiagnosticSeverity.Warning, range, SourceName,
+                string.Format(Diagnostics.DuplicateTemplateArgument, name, templateName));
+        }
+
+        public Diagnostic DuplicateTagAttribute(Range range, string name, string tagName)
+        {
+            return new Diagnostic(DiagnosticSeverity.Warning, range, SourceName,
+                string.Format(Diagnostics.DuplicateTagAttribute, name, tagName));
+        }
     }
 }

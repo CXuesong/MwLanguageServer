@@ -40,6 +40,7 @@ namespace MwLanguageServer.Linter
             var ast = Parser.Parse(doc.Content);
             var diag = new List<Diagnostic>();
             diag.AddRange(CheckMatchingPairs(ast));
+            diag.AddRange(CheckDuplicateArguments(ast));
             return new LintedWikitextDocument(ast, diag);
         }
 
@@ -84,6 +85,32 @@ namespace MwLanguageServer.Linter
             {
                 yield return df.OpenTagClosedByEndOfLine(RangeOf(italicsSwitch));
                 boldSwitch = null;
+            }
+        }
+
+        private IEnumerable<Diagnostic> CheckDuplicateArguments(Node root)
+        {
+            foreach (var node in root.EnumDescendants())
+            {
+                if (node is Template tp)
+                {
+                    var names = new HashSet<string>();
+                    foreach (var p in tp.Arguments.EnumNameArgumentPairs())
+                    {
+                        if (!names.Add(p.Key))
+                            yield return df.DuplicateTemplateArgument(RangeOf(p.Value), p.Key, MwParserUtility.NormalizeTitle(tp.Name));
+                    }
+                } else if (node is TagNode tag)
+                {
+                    var names = new HashSet<string>();
+                    foreach (var attr in tag.Attributes)
+                    {
+                        if (attr.Name == null) continue;
+                        var name = attr.Name.ToString().Trim();
+                        if (!names.Add(name))
+                            yield return df.DuplicateTagAttribute(RangeOf(attr), name, tag.Name);
+                    }
+                }
             }
         }
     }
