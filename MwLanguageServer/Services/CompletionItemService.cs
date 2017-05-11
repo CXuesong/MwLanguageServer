@@ -13,7 +13,7 @@ namespace MwLanguageServer.Services
         {
             var item = RequestContext.Request.Parameters.ToObject<CompletionItem>(Utility.CamelCaseJsonSerializer);
             // Add a pair of square brackets around the inserted text.
-            item.InsertText = $"[{item.Label}]";
+            item.InsertText = (string) item.Data;
             return item;
         }
     }

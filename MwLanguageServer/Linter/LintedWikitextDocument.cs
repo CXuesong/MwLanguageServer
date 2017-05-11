@@ -41,8 +41,11 @@ namespace MwLanguageServer.Linter
             var dict = new Dictionary<string, List<TemplateArgumentInfo>>();
             foreach (var template in _Root.EnumDescendants().OfType<Template>())
             {
-                var name = MwParserUtility.NormalizeTitle(template.Name);
+                if (template.IsMagicWord) continue;
+                var name = template.Name?.ToString();
                 if (string.IsNullOrEmpty(name)) continue;
+                name = MwParserUtility.NormalizeTitle(name);
+                if (name.Contains('{') || name.Contains('}')) continue;
                 name = Utility.ExpandTransclusionTitle(name);
                 // Start to infer it.
                 if (!dict.TryGetValue(name, out var parameters))
@@ -61,7 +64,15 @@ namespace MwLanguageServer.Linter
             }
             foreach (var p in dict)
             {
-                if (store.UpdatePageInfo(new PageInfo(p.Key, Prompts.InferredPageInfo, p.Value, true))) ct++;
+                var isTemplate = Utility.IsTemplateTitle(p.Key);
+                var localName = p.Key;
+                if (isTemplate)
+                {
+                    Debug.Assert(p.Key.StartsWith("Template:"));
+                    localName = p.Key.Substring(9);
+                }
+                if (store.UpdatePageInfo(new PageInfo(p.Key, localName, Prompts.InferredPageInfo,
+                    p.Value, isTemplate, true))) ct++;
             }
             return ct;
         }

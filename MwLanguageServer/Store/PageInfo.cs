@@ -12,19 +12,25 @@ namespace MwLanguageServer.Store
     public class PageInfo
     {
 
-        public PageInfo(string name, string summary, IReadOnlyList<TemplateArgumentInfo> arguments, bool isInferred)
+        public PageInfo(string fullName, string localName, string summary, IReadOnlyList<TemplateArgumentInfo> arguments, bool isTemplate, bool isInferred)
         {
-            Name = name;
+            FullName = fullName;
+            LocalName = localName;
             Summary = summary;
             Arguments = arguments;
+            IsTemplate = isTemplate;
             IsInferred = isInferred;
         }
 
-        public string Name { get; }
+        public string FullName { get; }
+
+        public string LocalName { get; }
 
         public string Summary { get; }
 
         public IReadOnlyList<TemplateArgumentInfo> Arguments { get; }
+
+        public bool IsTemplate { get; }
 
         public bool IsInferred { get; }
 
@@ -35,7 +41,7 @@ namespace MwLanguageServer.Store
             if (signatureCache == null)
             {
                 var labelBuilder = new StringBuilder("{{");
-                labelBuilder.Append(Name);
+                labelBuilder.Append(FullName);
                 var sig = new SignatureInformation();
                 if (Arguments.Count > 0)
                 {

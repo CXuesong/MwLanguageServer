@@ -137,11 +137,19 @@ namespace MwLanguageServer
 
         public static string ExpandTransclusionTitle(string title)
         {
+            if (title == null) throw new ArgumentNullException(nameof(title));
             Debug.Assert(title == MwParserUtility.NormalizeTitle(title));
             if (title.StartsWith(":")) return title.Substring(1);
             if (!title.Contains(':')) return "Template:" + title;
             // Something like {{Test:abcd}}, here we treat it as is with namespace name
             return title;
+        }
+
+        public static bool IsTemplateTitle(string title)
+        {
+            if (title == null) throw new ArgumentNullException(nameof(title));
+            Debug.Assert(title == MwParserUtility.NormalizeTitle(title));
+            return title.StartsWith("Template:");
         }
     }
 }

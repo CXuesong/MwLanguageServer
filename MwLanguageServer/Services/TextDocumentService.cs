@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
@@ -14,10 +15,12 @@ namespace MwLanguageServer.Services
     [JsonRpcScope(MethodPrefix = "textDocument/")]
     public class TextDocumentService : LanguageServiceBase
     {
+        private readonly ClientProxy client;
         private readonly ILoggerFactory loggerFactory;
 
-        public TextDocumentService(ILoggerFactory loggerFactory)
+        public TextDocumentService(ClientProxy client, ILoggerFactory loggerFactory)
         {
+            this.client = client;
             this.loggerFactory = loggerFactory;
         }
 
@@ -82,10 +85,24 @@ namespace MwLanguageServer.Services
                 ".NET Framework (pronounced dot net) is a software framework developed by Microsoft that runs primarily on Microsoft Windows.", null),
         };
 
+        private static readonly Regex leftBracketMatcher =
+            new Regex(@"((?<!\{)\{\{\{?|(?<!\[)\[\[)(?=[^\r\n\|\}\]]*\B)", RegexOptions.RightToLeft);
+
         [JsonRpcMethod]
         public CompletionList Completion(TextDocumentIdentifier textDocument, Position position)
         {
-            return new CompletionList(PredefinedCompletionItems);
+            var doc = Session.DocumentStates[textDocument.Uri];
+            var match = leftBracketMatcher.Match(doc.TextDocument.Content, doc.TextDocument.OffsetAt(position));
+            client.Window.LogMessage(MessageType.Info, match.ToString());
+            switch (match.Value)
+            {
+                case "[[":
+                    return new CompletionList(true, Session.PageInfoStore.GetWikiLinkCompletionItems());
+                case "{{":
+                    return new CompletionList(true, Session.PageInfoStore.GetTemplateCompletionItems());
+                default:
+                    return null;
+            }
         }
 
     }
