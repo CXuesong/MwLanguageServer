@@ -7,6 +7,7 @@ using System.Text;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using MwLanguageServer.Localizable;
+using MwLanguageServer.Store;
 using MwParserFromScratch;
 using MwParserFromScratch.Nodes;
 
@@ -22,30 +23,32 @@ namespace MwLanguageServer.Linter
             TextDocument = textDocument;
             _Root = root;
             Diagnostics = diagnostics == null || diagnostics.Count == 0 ? Diagnostic.EmptyDiagnostics : diagnostics;
-            templateParametersDict = new Lazy<IDictionary<string, IList<ParameterInformation>>>(BuildTemplateSignatureDict);
         }
 
         // We need to assume the content of _Root is readonly.
         private readonly Wikitext _Root;
 
-        private readonly Lazy<IDictionary<string, IList<ParameterInformation>>> templateParametersDict;
-
         public TextDocument TextDocument { get; }
 
         public IList<Diagnostic> Diagnostics { get; }
 
-        private IDictionary<string, IList<ParameterInformation>> BuildTemplateSignatureDict()
+        public int InferTemplateInformation(PageInfoStore store)
         {
+            if (store == null) throw new ArgumentNullException(nameof(store));
+            int ct = 0;
             // template, argument
             var argumentSet = new HashSet<(string, string)>();
-            var dict = new Dictionary<string, IList<ParameterInformation>>();
+            var dict = new Dictionary<string, List<TemplateArgumentInfo>>();
             foreach (var template in _Root.EnumDescendants().OfType<Template>())
             {
                 var name = MwParserUtility.NormalizeTitle(template.Name);
                 if (string.IsNullOrEmpty(name)) continue;
+                name = Utility.ExpandTransclusionTitle(name);
+                // Start to infer it.
                 if (!dict.TryGetValue(name, out var parameters))
                 {
-                    parameters = new List<ParameterInformation>();
+                    if (store.ContainsPageInfo(name)) continue;
+                    parameters = new List<TemplateArgumentInfo>();
                     dict.Add(name, parameters);
                 }
                 foreach (var p in template.Arguments.EnumNameArgumentPairs())
@@ -53,10 +56,14 @@ namespace MwLanguageServer.Linter
                     if (argumentSet.Contains((name, p.Key))) continue;
                     argumentSet.Add((name, p.Key));
                     // TODO: Insert documentation here.
-                    parameters.Add(new ParameterInformation(p.Key, Utility.EscapeMd(p.Key)));
+                    parameters.Add(new TemplateArgumentInfo(p.Key, null));
                 }
             }
-            return dict;
+            foreach (var p in dict)
+            {
+                if (store.UpdatePageInfo(new PageInfo(p.Key, Prompts.InferredPageInfo, p.Value, true))) ct++;
+            }
+            return ct;
         }
 
         public Hover GetHover(Position position)
@@ -101,7 +108,7 @@ namespace MwLanguageServer.Linter
                 TextDocument.PositionAt(focusNode.Start + focusNode.Length)));
         }
 
-        public SignatureHelp GetSignatureHelp(Position position)
+        public SignatureHelp GetSignatureHelp(Position position, PageInfoStore store)
         {
             var node = TraceNode(position);
             Node lastNode = null;
@@ -115,27 +122,20 @@ namespace MwLanguageServer.Linter
             var template = (Template) node;
             var templateName = MwParserUtility.NormalizeTitle(template.Name);
             if (string.IsNullOrEmpty(templateName)) return null;
-            if (templateParametersDict.Value.TryGetValue(templateName, out var pa))
+            templateName = Utility.ExpandTransclusionTitle(templateName);
+            var templateInfo = store.TryGetPageInfo(templateName);
+            if (templateInfo == null) return null;
+            var help = new SignatureHelp
             {
-                var help = new SignatureHelp
-                {
-                    Signatures =
-                        new List<SignatureInformation>
-                        {
-                            new SignatureInformation(Utility.NodeToMd(template),
-                                template.IsMagicWord ? Prompts.TemplateMagicNode : Prompts.TemplateNode,
-                                pa)
-                        },
-                    ActiveSignature = 0
-                };
-                if (lastNode is TemplateArgument arg)
-                {
-                    var argName = arg.ArgumentName();
-                    help.ActiveParameter = pa.IndexOf(p => p.Label == argName);
-                }
-                return help;
+                Signatures = new[] {templateInfo.ToSignatureInformation()},
+                ActiveSignature = 0
+            };
+            if (lastNode is TemplateArgument arg)
+            {
+                var argName = arg.ArgumentName();
+                help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
             }
-            return null;
+            return help;
         }
 
         private Node TraceNode(Position position)

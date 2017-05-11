@@ -130,6 +130,9 @@
     <value>Format Switch</value>
     <comment>Unofficial name of bold (''') &amp; italics ('').</comment>
   </data>
+  <data name="InferredPageInfo" xml:space="preserve">
+    <value>Inferred page information.</value>
+  </data>
   <data name="Italics" xml:space="preserve">
     <value>Italics</value>
   </data>
@@ -141,6 +144,9 @@
   </data>
   <data name="TemplateNode" xml:space="preserve">
     <value>Template Transclusion</value>
+  </data>
+  <data name="UsageColon" xml:space="preserve">
+    <value>Usage: </value>
   </data>
   <data name="WikiLinkNode" xml:space="preserve">
     <value>Wiki Link</value>

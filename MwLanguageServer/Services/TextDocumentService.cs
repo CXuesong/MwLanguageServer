@@ -32,7 +32,7 @@ namespace MwLanguageServer.Services
         public SignatureHelp SignatureHelp(TextDocumentIdentifier textDocument, Position position)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
-            return doc.LintedDocument.GetSignatureHelp(position);
+            return doc.LintedDocument.GetSignatureHelp(position, Session.PageInfoStore);
         }
 
         [JsonRpcMethod(IsNotification = true)]

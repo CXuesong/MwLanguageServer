@@ -98,6 +98,15 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似 Inferred page information. 的本地化字符串。
+        /// </summary>
+        internal static string InferredPageInfo {
+            get {
+                return ResourceManager.GetString("InferredPageInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Italics 的本地化字符串。
         /// </summary>
         internal static string Italics {
@@ -130,6 +139,15 @@ namespace MwLanguageServer.Localizable {
         internal static string TemplateNode {
             get {
                 return ResourceManager.GetString("TemplateNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Usage:  的本地化字符串。
+        /// </summary>
+        internal static string UsageColon {
+            get {
+                return ResourceManager.GetString("UsageColon", resourceCulture);
             }
         }
         

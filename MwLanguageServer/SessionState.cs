@@ -15,6 +15,7 @@ using LanguageServer.VsCode.Contracts.Client;
 using LanguageServer.VsCode.Server;
 using Microsoft.Extensions.Logging;
 using MwLanguageServer.Linter;
+using MwLanguageServer.Store;
 using MwParserFromScratch;
 using MwParserFromScratch.Nodes;
 
@@ -23,18 +24,22 @@ namespace MwLanguageServer
     public class SessionState
     {
 
-        public SessionState(ClientProxy clientProxy)
+        public SessionState(ClientProxy clientProxy, ILoggerFactory loggerFactory)
         {
             if (clientProxy == null) throw new ArgumentNullException(nameof(clientProxy));
             ClientProxy = clientProxy;
-            DocumentStates = new ConcurrentDictionary<Uri, DocumentState>();
+            logger = loggerFactory.CreateLogger<SessionState>();
         }
+
+        private ILogger logger;
 
         public ClientProxy ClientProxy { get; }
         
-        public ConcurrentDictionary<Uri, DocumentState> DocumentStates { get; }
+        public ConcurrentDictionary<Uri, DocumentState> DocumentStates { get; } = new ConcurrentDictionary<Uri, DocumentState>();
 
         public LanguageServerSettings Settings { get; set; } = new LanguageServerSettings();
+
+        public PageInfoStore PageInfoStore { get; } = new PageInfoStore();
 
         public void Attach(DocumentState doc)
         {
@@ -68,6 +73,9 @@ namespace MwLanguageServer
         {
             var d = (DocumentState)sender;
             ClientProxy.TextDocument.PublishDiagnostics(d.TextDocument.Uri, d.LintedDocument.Diagnostics);
+            var inferredCount = d.LintedDocument.InferTemplateInformation(PageInfoStore);
+            logger.LogTrace("Inferred {count} template information from {document}.", inferredCount,
+                d.TextDocument.Uri);
         }
 
     }
