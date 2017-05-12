@@ -32,13 +32,15 @@ namespace MwLanguageServer.Linter
 
         public IList<Diagnostic> Diagnostics { get; }
 
+        /// <summary>
+        /// Inferss linked/transcluded pages information, and stores it into global store.
+        /// </summary>
         public int InferTemplateInformation(PageInfoStore store)
         {
             if (store == null) throw new ArgumentNullException(nameof(store));
             int ct = 0;
             // template, argument
-            var argumentSet = new HashSet<(string, string)>();
-            var dict = new Dictionary<string, List<TemplateArgumentInfo>>();
+            var dict = new Dictionary<string, Dictionary<string, TemplateArgumentInfo>>();
             foreach (var template in _Root.EnumDescendants().OfType<Template>())
             {
                 if (template.IsMagicWord) continue;
@@ -51,15 +53,14 @@ namespace MwLanguageServer.Linter
                 if (!dict.TryGetValue(name, out var parameters))
                 {
                     if (store.ContainsPageInfo(name)) continue;
-                    parameters = new List<TemplateArgumentInfo>();
+                    parameters = new Dictionary<string, TemplateArgumentInfo>();
                     dict.Add(name, parameters);
                 }
                 foreach (var p in template.Arguments.EnumNameArgumentPairs())
                 {
-                    if (argumentSet.Contains((name, p.Key))) continue;
-                    argumentSet.Add((name, p.Key));
+                    if (parameters.ContainsKey(p.Key)) continue;
                     // TODO: Insert documentation here.
-                    parameters.Add(new TemplateArgumentInfo(p.Key, null));
+                    parameters.Add(p.Key, new TemplateArgumentInfo(p.Key, null));
                 }
             }
             foreach (var p in dict)
@@ -72,7 +73,9 @@ namespace MwLanguageServer.Linter
                     localName = p.Key.Substring(9);
                 }
                 if (store.UpdatePageInfo(new PageInfo(p.Key, localName, Prompts.InferredPageInfo,
-                    p.Value, isTemplate, true))) ct++;
+                    p.Value.OrderBy(p1 => p1.Key, TemplateArgumentNameComparer.Default)
+                        .Select(p1 => p1.Value).ToArray(),
+                    isTemplate, true))) ct++;
             }
             return ct;
         }
