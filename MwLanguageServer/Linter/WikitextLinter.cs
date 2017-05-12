@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
 using MwParserFromScratch;
@@ -34,14 +35,24 @@ namespace MwLanguageServer.Linter
 
         public WikitextParser Parser { get; }
 
-        public LintedWikitextDocument Lint(TextDocument doc)
+        public LintedWikitextDocument Lint(TextDocument doc, CancellationToken ct)
         {
+            ct.ThrowIfCancellationRequested();
             document = doc;
-            var ast = Parser.Parse(doc.Content);
-            var diag = new List<Diagnostic>();
-            diag.AddRange(CheckMatchingPairs(ast));
-            diag.AddRange(CheckDuplicateArguments(ast));
-            return new LintedWikitextDocument(doc, ast, diag);
+            try
+            {
+                var ast = Parser.Parse(doc.Content);
+                ct.ThrowIfCancellationRequested();
+                var diag = new List<Diagnostic>();
+                diag.AddRange(CheckMatchingPairs(ast));
+                ct.ThrowIfCancellationRequested();
+                diag.AddRange(CheckDuplicateArguments(ast));
+                return new LintedWikitextDocument(doc, ast, diag);
+            }
+            finally
+            {
+                document = null;
+            }
         }
 
         private static readonly char[] newLineCharacters = {'\r', '\n'};

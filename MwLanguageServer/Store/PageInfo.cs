@@ -12,10 +12,10 @@ namespace MwLanguageServer.Store
     public class PageInfo
     {
 
-        public PageInfo(string fullName, string localName, string summary, IReadOnlyList<TemplateArgumentInfo> arguments, bool isTemplate, bool isInferred)
+        public PageInfo(string fullName, string transclusionName, string summary, IReadOnlyList<TemplateArgumentInfo> arguments, bool isTemplate, bool isInferred)
         {
             FullName = fullName;
-            LocalName = localName;
+            TransclusionName = transclusionName;
             Summary = summary;
             Arguments = arguments;
             IsTemplate = isTemplate;
@@ -24,7 +24,7 @@ namespace MwLanguageServer.Store
 
         public string FullName { get; }
 
-        public string LocalName { get; }
+        public string TransclusionName { get; }
 
         public string Summary { get; }
 
@@ -36,12 +36,15 @@ namespace MwLanguageServer.Store
 
         private volatile SignatureInformation signatureCache;
 
+        /// <summary>
+        /// To Template signature information.
+        /// </summary>
         public SignatureInformation ToSignatureInformation()
         {
             if (signatureCache == null)
             {
                 var labelBuilder = new StringBuilder("{{");
-                labelBuilder.Append(FullName);
+                labelBuilder.Append(TransclusionName);
                 var sig = new SignatureInformation();
                 if (Arguments.Count > 0)
                 {

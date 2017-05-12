@@ -27,7 +27,7 @@ namespace MwLanguageServer.Services
             {
                 HoverProvider = true,
                 SignatureHelpProvider = new SignatureHelpOptions("{|=}\n"),
-                CompletionProvider = new CompletionOptions(true, "{[|"),
+                CompletionProvider = new CompletionOptions(true, "{[|=]}"),
                 TextDocumentSync = new TextDocumentSyncOptions
                 {
                     OpenClose = true,

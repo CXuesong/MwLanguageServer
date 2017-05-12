@@ -31,7 +31,9 @@ namespace MwLanguageServer
             logger = loggerFactory.CreateLogger<SessionState>();
         }
 
-        private ILogger logger;
+        private readonly ILogger logger;
+
+        private int needInferPageInfo = 1;
 
         public ClientProxy ClientProxy { get; }
         
@@ -66,16 +68,20 @@ namespace MwLanguageServer
         private void DocumentState_DocumentChanged(object sender, EventArgs e)
         {
             var d = (DocumentState)sender;
-            d.RequestLint();
+            d.RequestAnalysis();
         }
 
         private void DocumentState_DocumentLinted(object sender, EventArgs args)
         {
             var d = (DocumentState)sender;
             ClientProxy.TextDocument.PublishDiagnostics(d.TextDocument.Uri, d.LintedDocument.Diagnostics);
-            var inferredCount = d.LintedDocument.InferTemplateInformation(PageInfoStore);
-            logger.LogTrace("Inferred {count} template information from {document}.", inferredCount,
-                d.TextDocument.Uri);
+            // Infer pages upon document open.
+            if (Interlocked.Exchange(ref needInferPageInfo, 0) != 0)
+            {
+                var inferredCount = d.LintedDocument.InferTemplateInformation(PageInfoStore);
+                logger.LogDebug("Inferred {count} templates from {document}.", inferredCount,
+                    d.TextDocument.Uri);
+            }
         }
 
     }
@@ -146,16 +152,35 @@ namespace MwLanguageServer
             Synchronizer.NotifyChanges(changes);
         }
 
-        public void RequestLint()
+        public void RequestAnalysis()
         {
-            DocumentLinter.RequestLint();
+            DocumentLinter.RequestAnalyze();
+        }
+
+        /// <summary>
+        /// Apply impending changes to <see cref="TextDocument"/> right now.
+        /// </summary>
+        public Task ApplyChagesAsync()
+        {
+            return Synchronizer.ApplyChangesAsync();
+        }
+
+        /// <summary>
+        /// Apply impending changes to <see cref="LintedDocument"/> right now.
+        /// </summary>
+        public async Task AnalyzeAsync(CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            await Synchronizer.ApplyChangesAsync();
+            ct.ThrowIfCancellationRequested();
+            await DocumentLinter.AnalyzeAsync(ct);
         }
 
         protected virtual void OnDocumentChanged()
         {
             DocumentChanged?.Invoke(this, EventArgs.Empty);
             // Update the AST, btw.
-            DocumentLinter.RequestLint();
+            DocumentLinter.RequestAnalyze();
         }
 
         protected virtual void OnDocumentLinted()
@@ -165,11 +190,6 @@ namespace MwLanguageServer
 
         private class TextDocumentSynchronizer
         {
-            /// <summary>
-            /// Actually makes the changes to Owner.TextDocument per this milliseconds.
-            /// </summary>
-            private const int RenderChangesDelay = 100;
-
             public TextDocumentSynchronizer(DocumentState owner)
             {
                 if (owner == null) throw new ArgumentNullException(nameof(owner));
@@ -182,9 +202,9 @@ namespace MwLanguageServer
 
             private readonly object syncLock = new object();
 
-            private readonly object makeChangesLock = new object();
+            private Task applyChangesTask;      // Running task
 
-            private int willMakeChanges = 0;
+            private int willApplyChanges;
 
             public void NotifyChanges(IEnumerable<TextDocumentContentChangeEvent> changes)
             {
@@ -197,20 +217,34 @@ namespace MwLanguageServer
                     else
                         impendingChanges.AddRange(changes);
                 }
-                if (Interlocked.Exchange(ref willMakeChanges, 1) == 0)
+                if (Interlocked.Exchange(ref willApplyChanges, 1) == 0)
                 {
                     // Note: If we're currently in TryMakeChanges, willMakeChanges should be 0
-                    Task.Delay(RenderChangesDelay).ContinueWith(t => Task.Run((Action) TryMakeChanges));
+                    var delay = 100;
+                    var doc = Owner.TextDocument;
+                    // Wait for 1 sec for ever 50k-character content.
+                    if (doc != null) delay = Math.Max(delay, doc.Content.Length / 50);
+                    Task.Delay(delay).ContinueWith(t => ApplyChangesAsync());
                 }
             }
 
-            // Only 1 TryMakeChanges() running at one time.
-            private void TryMakeChanges()
+            public Task ApplyChangesAsync()
             {
-                if (!Monitor.TryEnter(makeChangesLock)) return;
+                lock (syncLock)
+                {
+                    if (applyChangesTask == null)
+                    {
+                        applyChangesTask = Task.Run((Action) ApplyChangesCore);
+                    }
+                    return applyChangesTask;
+                }
+            }
+
+            private void ApplyChangesCore()
+            {
                 try
                 {
-                    Interlocked.Exchange(ref willMakeChanges, 0);
+                    Interlocked.Exchange(ref willApplyChanges, 0);
                     while (true)
                     {
                         List<TextDocumentContentChangeEvent> localChanges;
@@ -244,7 +278,7 @@ namespace MwLanguageServer
                 }
                 finally
                 {
-                    Monitor.Exit(makeChangesLock);
+                    lock (syncLock) applyChangesTask = null;
                     Owner.Logger.LogDebug(0, "Finished making changes to {document}.", Owner.TextDocument.Uri);
                 }
             }
@@ -265,7 +299,9 @@ namespace MwLanguageServer
 
             public DocumentState Owner { get; }
 
-            private readonly object lintLock = new object();
+            private readonly object syncLock = new object();
+
+            private Task analyzeTask;
 
             private int willLint = 0;
 
@@ -274,26 +310,39 @@ namespace MwLanguageServer
             /// <summary>
             /// Request for linting the document, without any condition.
             /// </summary>
-            public void RequestLint()
+            public void RequestAnalyze()
             {
-                Interlocked.Increment(ref impendingRequests);
+                Interlocked.Exchange(ref impendingRequests, 1);
                 if (Interlocked.Exchange(ref willLint, 1) == 0)
                 {
-                    Task.Delay(RenderChangesDelay).ContinueWith(t => Task.Run((Action) TryLint));
+                    Task.Delay(RenderChangesDelay).ContinueWith(t => AnalyzeAsync(CancellationToken.None));
                 }
             }
 
-            private void TryLint()
+            public Task AnalyzeAsync(CancellationToken ct)
             {
-                if (!Monitor.TryEnter(lintLock)) return;
+                if (ct.IsCancellationRequested) return Task.FromCanceled(ct);
+                lock (syncLock)
+                {
+                    if (analyzeTask == null)
+                    {
+                        analyzeTask = Task.Factory.StartNew(o => AnalyzeCore((CancellationToken) o), ct, ct);
+                    }
+                    return analyzeTask;
+                }
+            }
+
+            private void AnalyzeCore(CancellationToken ct)
+            {
                 try
                 {
                     Interlocked.Exchange(ref willLint, 0);
                     while (Interlocked.Exchange(ref impendingRequests, 0) > 0)
                     {
-                        Owner.Logger.LogDebug(0, "Start linting {document}.", Owner.TextDocument.Uri);
+                        ct.ThrowIfCancellationRequested();
+                        Owner.Logger.LogDebug(0, "Start analyzing {document}.", Owner.TextDocument.Uri);
                         var doc = Owner.TextDocument;
-                        var linted = Owner.WikitextLinter.Lint(doc);
+                        var linted = Owner.WikitextLinter.Lint(doc, ct);
                         // document has been changed!
                         // then just wait for another RequestLint()
                         if (doc != Owner.TextDocument) continue;
@@ -303,12 +352,12 @@ namespace MwLanguageServer
                 }
                 catch (Exception ex)
                 {
-                    Owner.Logger.LogError(0, ex, "Error linting {document}.", Owner.TextDocument.Uri);
+                    Owner.Logger.LogError(0, ex, "Error analyzing {document}.", Owner.TextDocument.Uri);
                 }
                 finally
                 {
-                    Monitor.Exit(lintLock);
-                    Owner.Logger.LogDebug(0, "Finished linting {document}.", Owner.TextDocument.Uri);
+                    lock (syncLock) analyzeTask = null;
+                    Owner.Logger.LogDebug(0, "Finished analyzing {document}.", Owner.TextDocument.Uri);
                 }
             }
         }

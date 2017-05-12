@@ -76,7 +76,7 @@ namespace MwLanguageServer
             builder.Register<ISerilogLogger>(ctx => new LoggerConfiguration()
                     .Destructure.AsScalar<RequestMessage>()
                     .Destructure.AsScalar<ResponseMessage>()
-                    .MinimumLevel.Is(ctx.Resolve<ApplicationConfiguration>().Debug
+                    .MinimumLevel.Is(ctx.Resolve<ApplicationConfiguration>().Verbose
                         ? LogEventLevel.Verbose
                         : LogEventLevel.Debug)
                     .WriteTo

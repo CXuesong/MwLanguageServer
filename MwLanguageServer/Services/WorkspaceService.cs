@@ -24,7 +24,7 @@ namespace MwLanguageServer.Services
             Session.Settings = settings.WikitextLanguageServer;
             foreach (var doc in Session.DocumentStates.Values)
             {
-                doc.RequestLint();
+                doc.RequestAnalysis();
             }
         }
 

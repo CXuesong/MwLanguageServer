@@ -50,7 +50,6 @@ namespace MwLanguageServer.Store
 
         public IReadOnlyCollection<CompletionItem> GetWikiLinkCompletionItems()
         {
-            if (wikiLinkCompletionItems != null) return wikiLinkCompletionItems;
             lock (wikiLinkCompletionItems_lock)
             {
                 if (wikiLinkCompletionItems == null)
@@ -65,18 +64,13 @@ namespace MwLanguageServer.Store
 
         public IReadOnlyCollection<CompletionItem> GetTemplateCompletionItems()
         {
-            if (templateCompletionItems != null) return wikiLinkCompletionItems;
             lock (templateCompletionItems_lock)
             {
                 if (templateCompletionItems == null)
                 {
-                    templateCompletionItems = pageInfoDict.Values.Select(pi =>
-                    {
-                        var name = pi.IsTemplate ? pi.LocalName : (":" + pi.FullName);
-                        return new CompletionItem(
-                            name, pi.IsTemplate ? CompletionItemKind.Function : CompletionItemKind.File,
-                            pi.Summary, name);
-                    }).ToImmutableArray();
+                    templateCompletionItems = pageInfoDict.Values.Select(pi => new CompletionItem(
+                        pi.TransclusionName, pi.IsTemplate ? CompletionItemKind.Function : CompletionItemKind.File,
+                        pi.Summary, pi.TransclusionName)).ToImmutableArray();
                 }
                 return templateCompletionItems;
             }

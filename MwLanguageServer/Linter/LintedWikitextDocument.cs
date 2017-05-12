@@ -66,13 +66,17 @@ namespace MwLanguageServer.Linter
             foreach (var p in dict)
             {
                 var isTemplate = Utility.IsTemplateTitle(p.Key);
-                var localName = p.Key;
+                string transclusionName;
                 if (isTemplate)
                 {
                     Debug.Assert(p.Key.StartsWith("Template:"));
-                    localName = p.Key.Substring(9);
+                    transclusionName = p.Key.Substring(9);
                 }
-                if (store.UpdatePageInfo(new PageInfo(p.Key, localName, Prompts.InferredPageInfo,
+                else
+                {
+                    transclusionName = ":" + p.Key;
+                }
+                if (store.UpdatePageInfo(new PageInfo(p.Key, transclusionName, Prompts.InferredPageInfo,
                     p.Value.OrderBy(p1 => p1.Key, TemplateArgumentNameComparer.Default)
                         .Select(p1 => p1.Value).ToArray(),
                     isTemplate, true))) ct++;
@@ -82,7 +86,7 @@ namespace MwLanguageServer.Linter
 
         public Hover GetHover(Position position)
         {
-            var node = TraceNode(position);
+            var node = TraceNode(position, 0);
             if (node == null) return null;
             Node prevNode = null;
             var nodeTrace = new List<string>();
@@ -124,37 +128,42 @@ namespace MwLanguageServer.Linter
 
         public SignatureHelp GetSignatureHelp(Position position, PageInfoStore store)
         {
-            var node = TraceNode(position);
+            // We want to decide the node to the left of the caret.
+            var node = TraceNode(position, -1);
             Node lastNode = null;
             while (node != null)
             {
-                if (node is Template) break;
+                switch (node)
+                {
+                    case Template template:
+                        var templateName = MwParserUtility.NormalizeTitle(template.Name);
+                        if (string.IsNullOrEmpty(templateName)) return null;
+                        templateName = Utility.ExpandTransclusionTitle(templateName);
+                        var templateInfo = store.TryGetPageInfo(templateName);
+                        if (templateInfo == null) return null;
+                        var help = new SignatureHelp
+                        {
+                            Signatures = new[] {templateInfo.ToSignatureInformation()},
+                            ActiveSignature = 0
+                        };
+                        if (lastNode is TemplateArgument arg)
+                        {
+                            var argName = arg.ArgumentName();
+                            help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
+                        }
+                        return help;
+                    case WikiLink wikiLink:
+                        return null;
+                }
                 lastNode = node;
                 node = node.ParentNode;
             }
-            if (node == null) return null;
-            var template = (Template) node;
-            var templateName = MwParserUtility.NormalizeTitle(template.Name);
-            if (string.IsNullOrEmpty(templateName)) return null;
-            templateName = Utility.ExpandTransclusionTitle(templateName);
-            var templateInfo = store.TryGetPageInfo(templateName);
-            if (templateInfo == null) return null;
-            var help = new SignatureHelp
-            {
-                Signatures = new[] {templateInfo.ToSignatureInformation()},
-                ActiveSignature = 0
-            };
-            if (lastNode is TemplateArgument arg)
-            {
-                var argName = arg.ArgumentName();
-                help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
-            }
-            return help;
+            return null;
         }
 
-        private Node TraceNode(Position position)
+        private Node TraceNode(Position position, int offset)
         {
-            return TraceNode(TextDocument.OffsetAt(position));
+            return TraceNode(Math.Max(0, TextDocument.OffsetAt(position) + offset));
         }
 
         private Node TraceNode(int offset)

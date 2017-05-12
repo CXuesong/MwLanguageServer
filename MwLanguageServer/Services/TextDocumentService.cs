@@ -9,6 +9,7 @@ using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Contracts.Client;
 using LanguageServer.VsCode.Server;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace MwLanguageServer.Services
 {
@@ -32,10 +33,14 @@ namespace MwLanguageServer.Services
         }
 
         [JsonRpcMethod]
-        public SignatureHelp SignatureHelp(TextDocumentIdentifier textDocument, Position position)
+        public async Task<SignatureHelp> SignatureHelp(TextDocumentIdentifier textDocument, Position position,
+            CancellationToken ct)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
-            return doc.LintedDocument.GetSignatureHelp(position, Session.PageInfoStore);
+            await doc.AnalyzeAsync(ct);
+            ct.ThrowIfCancellationRequested();
+            var sh = doc.LintedDocument.GetSignatureHelp(position, Session.PageInfoStore);
+            return sh;
         }
 
         [JsonRpcMethod(IsNotification = true)]
@@ -44,7 +49,7 @@ namespace MwLanguageServer.Services
             var doc = new DocumentState(TextDocument.Load<FullTextDocument>(textDocument), loggerFactory);
             Session.DocumentStates[textDocument.Uri] = doc;
             Session.Attach(doc);
-            doc.RequestLint();
+            doc.RequestAnalysis();
         }
 
         [JsonRpcMethod(IsNotification = true)]
@@ -70,35 +75,24 @@ namespace MwLanguageServer.Services
             }
         }
 
-        private static readonly CompletionItem[] PredefinedCompletionItems =
-        {
-            new CompletionItem(".NET", CompletionItemKind.Keyword,
-                "Keyword1",
-                "Short for **.NET Framework**, a software framework by Microsoft (possibly its subsets) or later open source .NET Core.",
-                null),
-            new CompletionItem(".NET Standard", CompletionItemKind.Keyword,
-                "Keyword2",
-                "The .NET Standard is a formal specification of .NET APIs that are intended to be available on all .NET runtimes.",
-                null),
-            new CompletionItem(".NET Framework", CompletionItemKind.Keyword,
-                "Keyword3",
-                ".NET Framework (pronounced dot net) is a software framework developed by Microsoft that runs primarily on Microsoft Windows.", null),
-        };
-
         private static readonly Regex leftBracketMatcher =
             new Regex(@"((?<!\{)\{\{\{?|(?<!\[)\[\[)(?=[^\r\n\|\}\]]*\B)", RegexOptions.RightToLeft);
 
         [JsonRpcMethod]
-        public CompletionList Completion(TextDocumentIdentifier textDocument, Position position)
+        public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
+            await doc.AnalyzeAsync(ct);
             var match = leftBracketMatcher.Match(doc.TextDocument.Content, doc.TextDocument.OffsetAt(position));
-            client.Window.LogMessage(MessageType.Info, match.ToString());
+            ct.ThrowIfCancellationRequested();
+            //await client.Window.LogMessage(MessageType.Log, doc.TextDocument.Content.Substring(match.Index, 10));
             switch (match.Value)
             {
                 case "[[":
+                    //await client.Window.LogMessage(MessageType.Info, "[[" + JsonConvert.SerializeObject(Session.PageInfoStore.GetWikiLinkCompletionItems()));
                     return new CompletionList(true, Session.PageInfoStore.GetWikiLinkCompletionItems());
                 case "{{":
+                    //await client.Window.LogMessage(MessageType.Info, "{{" + JsonConvert.SerializeObject(Session.PageInfoStore.GetTemplateCompletionItems()));
                     return new CompletionList(true, Session.PageInfoStore.GetTemplateCompletionItems());
                 default:
                     return null;
