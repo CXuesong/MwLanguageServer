@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +40,8 @@ namespace MwLanguageServer.Services
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
             ct.ThrowIfCancellationRequested();
-            var sh = doc.LintedDocument.GetSignatureHelp(position, Session.PageInfoStore);
+            var sh = doc.LintedDocument.GetSignatureHelp(position, Session.MagicTemplateInfoStore,
+                Session.PageInfoStore);
             return sh;
         }
 
@@ -93,7 +95,8 @@ namespace MwLanguageServer.Services
                     return new CompletionList(true, Session.PageInfoStore.GetWikiLinkCompletionItems());
                 case "{{":
                     //await client.Window.LogMessage(MessageType.Info, "{{" + JsonConvert.SerializeObject(Session.PageInfoStore.GetTemplateCompletionItems()));
-                    return new CompletionList(true, Session.PageInfoStore.GetTemplateCompletionItems());
+                    return new CompletionList(true, Session.PageInfoStore.GetTemplateCompletionItems()
+                        .Concat(Session.MagicTemplateInfoStore.GetTemplateCompletionItems()));
                 default:
                     return null;
             }

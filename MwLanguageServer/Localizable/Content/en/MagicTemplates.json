@@ -1,0 +1,1150 @@
+﻿[
+  {
+    "Name": "!",
+    "Summary": "Used to include a pipe character as part of a template argument or table cell contents. Before this was added as a magic word, many wikis implemented this by creating Template:! with | as the content.",
+    "Signatures": []
+  },
+  {
+    "Name": "#dateformat",
+    "Aliases": [ "#formatdate" ],
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": "date"
+        },
+        {
+          "Name": "2",
+          "Summary": "format"
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#expr",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#invoke",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": "Module name."
+        },
+        {
+          "Name": "2",
+          "Summary": "Function name."
+        },
+        {
+          "Name": "3",
+          "Summary": null
+        },
+        {
+          "Name": "4",
+          "Summary": null
+        },
+        {
+          "Name": "5",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#language",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#special",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#speciale",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#switch",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "L",
+          "Summary": null
+        },
+        {
+          "Name": "L&#39;Aquila",
+          "Summary": null
+        },
+        {
+          "Name": "L&apos;Aquila",
+          "Summary": null
+        },
+        {
+          "Name": "L'Aquila",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#tag",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "attribute1",
+          "Summary": null
+        },
+        {
+          "Name": "attribute2",
+          "Summary": null
+        },
+        {
+          "Name": "name",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "#titleparts",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Anchorencode",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "ARTICLEPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "ARTICLEPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "ARTICLESPACE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "ARTICLESPACEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "BASEPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "BASEPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "Canonicalurl",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "action",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "CASCADINGSOURCES",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "CONTENTLANG",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CONTENTLANGUAGE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTDAY",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTDAY2",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTDAYNAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTDOW",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTHOUR",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTMONTH",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTMONTH1",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTMONTHABBREV",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTMONTHNAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTMONTHNAMEGEN",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTTIME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTTIMESTAMP",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTVERSION",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTWEEK",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "CURRENTYEAR",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "DEFAULTSORT",
+    "Aliases": [
+      "DEFAULTSORTKEY",
+      "DEFAULTCATEGORYSORT"
+    ],
+    "Summary": "Used for categorizing pages, sets a default category sort key. For example if you put {{DEFAULTSORT:Smith , John}} at the end of John Smith, the page would be sorted under \"S\" by default in categories.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple defaultsortkeys are used on one page or to make this defaultsort do nothing if a defaultsort was already specified earlier in the page."
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "DEFAULTSORTKEY:Sortkey",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "DIRECTIONMARK",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "DIRMARK",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "DISPLAYTITLE",
+    "Summary": "Format the current page's title header. The value must be equivalent to the default title: only capitalization changes to certain parts of the title (not all) and replacing spaces with underscores are allowed.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": "Title"
+        },
+        {
+          "Name": "2",
+          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple displaytitles are used on one page or to make this displaytitle do nothing if a displaytitle was already specified earlier in the page."
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Filepath",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Formatnum",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "FULLPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "FULLPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "Fullurl",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "action",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Gender",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "3",
+          "Summary": null
+        },
+        {
+          "Name": "4",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Grammar",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Lc",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Lcfirst",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "LOCALDAY",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALDAY2",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALDAYNAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALDOW",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALHOUR",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALMONTH",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALMONTH1",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALMONTHABBREV",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALMONTHNAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALMONTHNAMEGEN",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALTIME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALTIMESTAMP",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "Localurl",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "printable",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "LOCALWEEK",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "LOCALYEAR",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NAMESPACE",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "NAMESPACEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NAMESPACENUMBER",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "Ns",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Nse",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "NUMBERINGROUP",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "NUMBEROFACTIVEUSERS",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFADMINS",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFARTICLES",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFEDITS",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFFILES",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFPAGES",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "NUMBEROFUSERS",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMBEROFVIEWS",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "NUMINGROUP",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": "Group name."
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Padleft",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "3",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Padright",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "3",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Page name",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGEID",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGELANGUAGE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "PAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGESINCATEGORY",
+    "Aliases": [
+      "PAGESINCAT"
+    ],
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": "Category name."
+        },
+        {
+          "Name": "2",
+          "Summary": "The number of specified kind of pages only.\n`all`: all pages\n`pages`: ordinary pages (excluding subcategories and files)\n`subcats`: subcategories\n`files`: files"
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGESINNAMESPACE",
+    "Aliases": [
+      "PAGESINNS"
+    ],
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PAGESIZE",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Plural",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        },
+        {
+          "Name": "3",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PROTECTIONEXPIRY",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "PROTECTIONLEVEL",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONDAY",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONDAY2",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONID",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONMONTH",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONMONTH1",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONSIZE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "REVISIONTIMESTAMP",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONUSER",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "REVISIONYEAR",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "ROOTPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "ROOTPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SCRIPTPATH",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SERVER",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SERVERNAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SITENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "STYLEPATH",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SUBJECTPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SUBJECTPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SUBJECTSPACE",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "SUBJECTSPACEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SUBPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "SUBPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "TALKPAGENAME",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "TALKPAGENAMEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "TALKSPACE",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "TALKSPACEE",
+    "Summary": "Magic word.",
+    "Signatures": []
+  },
+  {
+    "Name": "Uc",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Ucfirst",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        }
+      ]
+    ]
+  },
+  {
+    "Name": "Urlencode",
+    "Summary": "Magic word.",
+    "Signatures": [
+      [
+        {
+          "Name": "1",
+          "Summary": null
+        },
+        {
+          "Name": "2",
+          "Summary": null
+        }
+      ]
+    ]
+  }
+]

@@ -54,6 +54,18 @@ namespace MwLanguageServer
             return null;
         }
 
+        public static int IndexOf<T>(this IEnumerable<T> source, T item)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            int index = 0;
+            foreach (var i in source)
+            {
+                if (EqualityComparer<T>.Default.Equals(i, item)) return index;
+                index++;
+            }
+            return -1;
+        }
+
         public static int IndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));

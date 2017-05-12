@@ -126,32 +126,56 @@ namespace MwLanguageServer.Linter
                 TextDocument.PositionAt(focusNode.Start + focusNode.Length)));
         }
 
-        public SignatureHelp GetSignatureHelp(Position position, PageInfoStore store)
+        public SignatureHelp GetSignatureHelp(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
         {
             // We want to decide the node to the left of the caret.
-            var node = TraceNode(position, -1);
+            var node = TraceNode(position, 0);
             Node lastNode = null;
             while (node != null)
             {
                 switch (node)
                 {
                     case Template template:
-                        var templateName = MwParserUtility.NormalizeTitle(template.Name);
-                        if (string.IsNullOrEmpty(templateName)) return null;
-                        templateName = Utility.ExpandTransclusionTitle(templateName);
-                        var templateInfo = store.TryGetPageInfo(templateName);
-                        if (templateInfo == null) return null;
-                        var help = new SignatureHelp
+                        if (template.IsMagicWord)
                         {
-                            Signatures = new[] {templateInfo.ToSignatureInformation()},
-                            ActiveSignature = 0
-                        };
-                        if (lastNode is TemplateArgument arg)
-                        {
-                            var argName = arg.ArgumentName();
-                            help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
+                            var info = magicStore.TryGetInfo(template.Name?.ToString().Trim());
+                            // E.g. non-existent, sharp(#)-leading template names
+                            if (info == null) return null;
+                            var help = new SignatureHelp
+                            {
+                                Signatures = info.ToSignatureInformation(),
+                                ActiveSignature = 0,
+                                ActiveParameter = -1,
+                            };
+                            // Magic Words are always positional, while it can fake "named arguments"
+                            if (lastNode is TemplateArgument arg)
+                            {
+                                var argIndex = template.Arguments.IndexOf(arg);
+                                help.ActiveSignature = info.Signatures.IndexOf(s => s.Count > argIndex);
+                                help.ActiveParameter = argIndex;
+                            }
+                            return help;
                         }
-                        return help;
+                        else
+                        {
+                            var templateName = MwParserUtility.NormalizeTitle(template.Name);
+                            if (string.IsNullOrEmpty(templateName)) return null;
+                            templateName = Utility.ExpandTransclusionTitle(templateName);
+                            var templateInfo = store.TryGetPageInfo(templateName);
+                            if (templateInfo == null) return null;
+                            var help = new SignatureHelp
+                            {
+                                Signatures = new[] {templateInfo.ToSignatureInformation()},
+                                ActiveSignature = 0,
+                                ActiveParameter = -1,
+                            };
+                            if (lastNode is TemplateArgument arg)
+                            {
+                                var argName = arg.ArgumentName();
+                                help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
+                            }
+                            return help;
+                        }
                     case WikiLink wikiLink:
                         return null;
                 }
@@ -178,7 +202,7 @@ namespace MwLanguageServer.Linter
             {
                 IWikitextSpanInfo span = node;
                 Debug.Assert(span.HasSpanInfo);
-                if (offset > span.Start && offset < span.Start + span.Length)
+                if (offset >= span.Start && offset <= span.Start + span.Length)
                     return TraceNode(node, offset);
             }
             return root;

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using JsonRpc.Standard.Contracts;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Contracts.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MwLanguageServer.Services
 {
@@ -44,6 +46,18 @@ namespace MwLanguageServer.Services
                         await client.Document.PublishDiagnostics(change.Uri, Diagnostic.EmptyDiagnostics);
                     }
                 }
+            }
+        }
+
+        [JsonRpcMethod]
+        public async Task ExecuteCommand(string command, JToken arguments)
+        {
+            switch (command)
+            {
+                case ServerCommands.DumpPageInfoStore:
+                    await client.Window.LogMessage(MessageType.Info,
+                        JsonConvert.SerializeObject(Session.PageInfoStore.Dump()));
+                    break;
             }
         }
     }

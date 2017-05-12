@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using LanguageServer.VsCode.Contracts;
 using MwLanguageServer.Linter;
+using MwLanguageServer.Localizable;
+using Newtonsoft.Json.Linq;
 
 namespace MwLanguageServer.Store
 {
@@ -74,6 +76,11 @@ namespace MwLanguageServer.Store
                 }
                 return templateCompletionItems;
             }
+        }
+
+        public IList<PageInfo> Dump()
+        {
+            return pageInfoDict.Values.ToList();
         }
     }
 }

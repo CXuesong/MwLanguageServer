@@ -29,6 +29,7 @@ namespace MwLanguageServer
             if (clientProxy == null) throw new ArgumentNullException(nameof(clientProxy));
             ClientProxy = clientProxy;
             logger = loggerFactory.CreateLogger<SessionState>();
+            MagicTemplateInfoStore.LoadLocalStore();
         }
 
         private readonly ILogger logger;
@@ -42,6 +43,8 @@ namespace MwLanguageServer
         public LanguageServerSettings Settings { get; set; } = new LanguageServerSettings();
 
         public PageInfoStore PageInfoStore { get; } = new PageInfoStore();
+
+        public MagicTemplateInfoStore MagicTemplateInfoStore { get; } = new MagicTemplateInfoStore();
 
         public void Attach(DocumentState doc)
         {

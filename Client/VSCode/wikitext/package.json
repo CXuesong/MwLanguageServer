@@ -22,6 +22,10 @@
             {
                 "command": "extension.sayHello",
                 "title": "Hello World"
+            },
+            {
+                "command": "wikitext.server.dumpPageInfoStore",
+                "title": "Server - Dump PageInfoStore"
             }
         ],
         "configuration": {
