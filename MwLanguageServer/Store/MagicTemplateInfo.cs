@@ -9,13 +9,14 @@ namespace MwLanguageServer.Store
 {
     public class MagicTemplateInfo
     {
-        public MagicTemplateInfo(string name, IReadOnlyCollection<string> aliases, string summary, bool isCaseSensitive, IReadOnlyCollection<IReadOnlyList<TemplateArgumentInfo>> signatures)
+        public MagicTemplateInfo(string name, IReadOnlyCollection<string> aliases, string summary, string remarks, bool isCaseSensitive, IReadOnlyCollection<IReadOnlyList<TemplateArgumentInfo>> signatures)
         {
             Name = name;
             Aliases = aliases;
             Summary = summary;
             IsCaseSensitive = isCaseSensitive;
             Signatures = signatures;
+            Remarks = remarks;
             if (Signatures == null || Signatures.Count == 0)
                 signatureCache = ImmutableArray<SignatureInformation>.Empty;
         }
@@ -25,6 +26,8 @@ namespace MwLanguageServer.Store
         public IReadOnlyCollection<string> Aliases { get; }
 
         public string Summary { get; }
+
+        public string Remarks { get; }
 
         public bool IsCaseSensitive { get; }
 
@@ -61,6 +64,7 @@ namespace MwLanguageServer.Store
                     labelBuilder.Append("}}");
                     sig.Label = labelBuilder.ToString();
                     sig.Documentation = Summary;
+                    if (!string.IsNullOrEmpty(Remarks)) sig.Documentation += "\n" + Remarks;
                     return sig;
                 }).ToImmutableArray();
             }
