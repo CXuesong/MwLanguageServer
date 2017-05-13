@@ -102,6 +102,7 @@ namespace MwLanguageServer
                         new Dictionary<string, string>
                         {
                             ["--debug"] = "Application:Debug",
+                            ["--verbose"] = "Application:Verbose",
                             ["--manual"] = "Application:Manual",
                             ["--waitForDebugger"] = "Application:WaitForDebugger",
                         })

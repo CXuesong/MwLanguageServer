@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_private\**" />
+    <EmbeddedResource Remove="_private\**" />
+    <None Remove="_private\**" />
+  </ItemGroup>
+
+</Project>

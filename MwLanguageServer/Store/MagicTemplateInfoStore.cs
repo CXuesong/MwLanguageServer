@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
 using LanguageServer.VsCode.Contracts;
+using MwLanguageServer.Infrastructures;
 using MwLanguageServer.Localizable;
 using Newtonsoft.Json;
 
@@ -16,12 +17,10 @@ namespace MwLanguageServer.Store
         }
 
         private static readonly JsonSerializer serializer = new JsonSerializer();
+        private readonly Trie<char, MagicTemplateInfo> caseSensitiveDict = new Trie<char, MagicTemplateInfo>();
 
-        private readonly Dictionary<string, MagicTemplateInfo> caseSensitiveDict = new Dictionary<string, MagicTemplateInfo>();
-        private readonly Dictionary<string, MagicTemplateInfo> caseInsensitiveDict = new Dictionary<string, MagicTemplateInfo>(StringComparer.OrdinalIgnoreCase);
-
-        private readonly object templateCompletionItems_lock = new object();
-        private IReadOnlyCollection<CompletionItem> templateCompletionItems;
+        private readonly Trie<char, MagicTemplateInfo> caseInsensitiveDict =
+            new Trie<char, MagicTemplateInfo>(CaseInsensitiveCharComparer.Default);
 
         public MagicTemplateInfo TryGetInfo(string name)
         {
@@ -43,8 +42,7 @@ namespace MwLanguageServer.Store
             {
                 foreach (var info in infoCollection)
                 {
-                    IDictionary<string, MagicTemplateInfo> dict =
-                        info.IsCaseSensitive ? caseSensitiveDict : caseInsensitiveDict;
+                    var dict = info.IsCaseSensitive ? caseSensitiveDict : caseInsensitiveDict;
                     dict.Add(info.Name, info);
                     if (info.Aliases != null)
                         foreach (var al in info.Aliases) dict.Add(al, info);
@@ -52,34 +50,24 @@ namespace MwLanguageServer.Store
             }
         }
 
-        public IReadOnlyCollection<CompletionItem> GetTemplateCompletionItems()
+        public IEnumerable<CompletionItem> GetTemplateCompletionItems(string prefix)
         {
-            lock (templateCompletionItems_lock)
+            lock (caseSensitiveDict)
             {
-                if (templateCompletionItems == null)
+                foreach (var p in caseSensitiveDict.WithPrefix(prefix))
                 {
-                    var builder = ImmutableArray.CreateBuilder<CompletionItem>();
-                    lock (caseSensitiveDict)
-                    {
-                        builder.Capacity = caseSensitiveDict.Count;
-                        foreach (var p in caseSensitiveDict)
-                        {
-                            builder.Add(new CompletionItem(p.Key, CompletionItemKind.Keyword, p.Value.Summary, p.Key));
-                        }
-                    }
-                    lock (caseInsensitiveDict)
-                    {
-                        builder.Capacity += caseInsensitiveDict.Count;
-                        foreach (var p in caseInsensitiveDict)
-                        {
-                            builder.Add(new CompletionItem(p.Key, CompletionItemKind.Keyword, p.Value.Summary, p.Key));
-                        }
-                    }
-                    templateCompletionItems = builder.MoveToImmutable();
+                    yield return new CompletionItem((string) p.Key, CompletionItemKind.Keyword,
+                        p.Value.Summary, (string) p.Key);
                 }
-                return templateCompletionItems;
+            }
+            lock (caseInsensitiveDict)
+            {
+                foreach (var p in caseInsensitiveDict.WithPrefix(prefix))
+                {
+                    yield return new CompletionItem((string) p.Key, CompletionItemKind.Keyword,
+                        p.Value.Summary, (string) p.Key);
+                }
             }
         }
-
     }
 }

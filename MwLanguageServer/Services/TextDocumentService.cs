@@ -81,25 +81,15 @@ namespace MwLanguageServer.Services
             new Regex(@"((?<!\{)\{\{\{?|(?<!\[)\[\[)(?=[^\r\n\|\}\]]*\B)", RegexOptions.RightToLeft);
 
         [JsonRpcMethod]
-        public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position, CancellationToken ct)
+        public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position,
+            CancellationToken ct)
         {
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
-            var match = leftBracketMatcher.Match(doc.TextDocument.Content, doc.TextDocument.OffsetAt(position));
-            ct.ThrowIfCancellationRequested();
-            //await client.Window.LogMessage(MessageType.Log, doc.TextDocument.Content.Substring(match.Index, 10));
-            switch (match.Value)
-            {
-                case "[[":
-                    //await client.Window.LogMessage(MessageType.Info, "[[" + JsonConvert.SerializeObject(Session.PageInfoStore.GetWikiLinkCompletionItems()));
-                    return new CompletionList(true, Session.PageInfoStore.GetWikiLinkCompletionItems());
-                case "{{":
-                    //await client.Window.LogMessage(MessageType.Info, "{{" + JsonConvert.SerializeObject(Session.PageInfoStore.GetTemplateCompletionItems()));
-                    return new CompletionList(true, Session.PageInfoStore.GetTemplateCompletionItems()
-                        .Concat(Session.MagicTemplateInfoStore.GetTemplateCompletionItems()));
-                default:
-                    return null;
-            }
+            return new CompletionList(true,
+                doc.LintedDocument.GetCompletionItems(position,
+                    Session.MagicTemplateInfoStore,
+                    Session.PageInfoStore));
         }
 
     }

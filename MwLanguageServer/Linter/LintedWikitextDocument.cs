@@ -128,7 +128,6 @@ namespace MwLanguageServer.Linter
 
         public SignatureHelp GetSignatureHelp(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
         {
-            // We want to decide the node to the left of the caret.
             var node = TraceNode(position, 0);
             Node lastNode = null;
             while (node != null)
@@ -177,6 +176,38 @@ namespace MwLanguageServer.Linter
                             return help;
                         }
                     case WikiLink wikiLink:
+                        return null;
+                }
+                lastNode = node;
+                node = node.ParentNode;
+            }
+            return null;
+        }
+
+        public IEnumerable<CompletionItem> GetCompletionItems(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
+        {
+            var offset = TextDocument.OffsetAt(position);
+            var node = TraceNode(offset);
+            Node lastNode = null;
+            while (node != null)
+            {
+                switch (node)
+                {
+                    case Template template:
+                        if (lastNode != null && lastNode == template.Name)
+                        {
+                            var start = ((IWikitextSpanInfo)lastNode).Start;
+                            var enteredName = TextDocument.GetRange(start, offset - start).Trim();
+                            return magicStore.GetTemplateCompletionItems(enteredName)
+                                .Concat(store.GetTemplateCompletionItems());
+                        }
+                        return null;
+                    case WikiLink wikiLink:
+                        if (lastNode != null && lastNode == wikiLink.Target)
+                        {
+                            var start = ((IWikitextSpanInfo)lastNode).Start;
+                            return store.GetWikiLinkCompletionItems();
+                        }
                         return null;
                 }
                 lastNode = node;

@@ -26,8 +26,8 @@ namespace MwLanguageServer.Services
             return new InitializeResult(new ServerCapabilities
             {
                 HoverProvider = true,
-                SignatureHelpProvider = new SignatureHelpOptions("{#:|=}\n"),
-                CompletionProvider = new CompletionOptions(true, "{[|=]}"),
+                SignatureHelpProvider = new SignatureHelpOptions("{[#:|=}\n"),
+                CompletionProvider = new CompletionOptions(true, "{[#|=]}"),
                 ExecuteCommandProvider = new ExecuteCommandOptions(ServerCommands.AllCommands),
                 TextDocumentSync = new TextDocumentSyncOptions
                 {
