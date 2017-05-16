@@ -20,5 +20,7 @@ namespace MwLanguageServer
         public bool Manual { get; set; }
 
         public bool WaitForDebugger { get; set; }
+
+        public string Language { get; set; }
     }
 }

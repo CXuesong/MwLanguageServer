@@ -2,6 +2,7 @@
   "Application": {
     "Debug": false,
     "Manual": false,
-    "WaitForDebugger": false
+    "WaitForDebugger": false,
+    "Language": null
   }
 }

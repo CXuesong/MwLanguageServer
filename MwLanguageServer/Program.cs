@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -41,13 +42,19 @@ namespace MwLanguageServer
             ConfigureContainer(builder);
             using (var container = builder.Build())
             {
+                var config = container.Resolve<ApplicationConfiguration>();
 #if DEBUG
-                if (container.Resolve<ApplicationConfiguration>().WaitForDebugger)
+                if (config.WaitForDebugger)
                 {
                     while (!Debugger.IsAttached) Thread.Sleep(1000);
                     Debugger.Break();
                 }
 #endif
+                if (!string.IsNullOrEmpty(config.Language))
+                {
+                    CultureInfo.CurrentUICulture = CultureInfo.DefaultThreadCurrentUICulture =
+                        new CultureInfo(config.Language);
+                }
                 var logger = container.Resolve<ILoggerFactory>().CreateLogger("Application");
                 logger.LogInformation("Start logging.");
                 logger.LogInformation("Arguments: {arguments}", (object) args);
