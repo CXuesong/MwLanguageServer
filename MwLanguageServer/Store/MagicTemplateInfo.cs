@@ -35,6 +35,30 @@ namespace MwLanguageServer.Store
 
         private volatile IList<SignatureInformation> signatureCache;
 
+        private string _Documentation;
+
+        public string GetDocumentation()
+        {
+            if (_Documentation == null)
+            {
+                var builder = new StringBuilder();
+                builder.Append(Name);
+                if (Aliases != null)
+                {
+                    foreach (var alias in Aliases)
+                    {
+                        builder.Append(" / ");
+                        builder.Append(alias);
+                    }
+                }
+                builder.AppendLine();
+                if (!string.IsNullOrEmpty(Summary)) builder.Append(Summary);
+                if (!string.IsNullOrEmpty(Remarks)) builder.AppendLine(Remarks);
+                _Documentation = builder.ToString();
+            }
+            return _Documentation;
+        }
+
         /// <summary>
         /// To Template signature information.
         /// </summary>
@@ -63,8 +87,7 @@ namespace MwLanguageServer.Store
                     }
                     labelBuilder.Append("}}");
                     sig.Label = labelBuilder.ToString();
-                    sig.Documentation = Summary;
-                    if (!string.IsNullOrEmpty(Remarks)) sig.Documentation += "\n" + Remarks;
+                    sig.Documentation = GetDocumentation();
                     return sig;
                 }).ToImmutableArray();
             }

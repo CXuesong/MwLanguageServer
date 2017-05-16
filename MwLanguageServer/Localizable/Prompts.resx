@@ -136,6 +136,10 @@
   <data name="Italics" xml:space="preserve">
     <value>Italics</value>
   </data>
+  <data name="Or" xml:space="preserve">
+    <value> or </value>
+    <comment>Need spaces before and after the phrase.</comment>
+  </data>
   <data name="TemplateArgumentNode" xml:space="preserve">
     <value>Template Argument</value>
   </data>

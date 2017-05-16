@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "Name": "!",
     "Summary": "Used to include a pipe character as part of a template argument or table cell contents. Before this was added as a magic word, many wikis implemented this by creating Template:! with | as the content.",
@@ -6,24 +6,33 @@
   },
   {
     "Name": "#dateformat",
-    "Aliases": [ "#formatdate" ],
+    "Aliases": [
+      "#formatdate"
+    ],
     "Summary": "Formats an unlinked date based on user \"date format\" preference, and adds metadata tagging it as a formatted date.",
     "Signatures": [
       [
         {
           "Name": "date",
-          "Summary": ""
+          "Summary": "",
+          "ForcePositional": true
         }
       ],
       [
         {
           "Name": "date",
-          "Summary": ""
+          "Summary": "",
+          "ForcePositional": true
         },
         {
           "Name": "format",
-          "Choices": [ "mdy", "dmy", "ymd" ],
-          "Summary": "For logged-out users and those who have not set a date format in their preferences, dates can be given a default. (all case sensitive)"
+          "Choices": [
+            "mdy",
+            "dmy",
+            "ymd"
+          ],
+          "Summary": "For logged-out users and those who have not set a date format in their preferences, dates can be given a default. (all case sensitive)",
+          "ForcePositional": true
         }
       ]
     ]
@@ -35,7 +44,8 @@
       [
         {
           "Name": "expression",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -47,25 +57,30 @@
       [
         {
           "Name": "test string",
-          "Summary": "A test string containing only white space is considered to be empty."
+          "Summary": "A test string containing only white space is considered to be empty.",
+          "ForcePositional": true
         },
         {
           "Name": "value if not empty",
-          "Summary": "If the first parameter is not empty the function displays the second argument."
+          "Summary": "If the first parameter is not empty the function displays the second argument.",
+          "ForcePositional": true
         },
         {
           "Name": "value if empty",
-          "Summary": "If the first parameter is empty or contains only whitespace characters (spaces, newlines, etc.) it displays the third argument."
+          "Summary": "If the first parameter is empty or contains only whitespace characters (spaces, newlines, etc.) it displays the third argument.",
+          "ForcePositional": true
         }
       ],
       [
         {
           "Name": "test string",
-          "Summary": "A test string containing only white space is considered to be empty."
+          "Summary": "A test string containing only white space is considered to be empty.",
+          "ForcePositional": true
         },
         {
           "Name": "value if not empty",
-          "Summary": "If the first parameter is not empty the function displays the second argument."
+          "Summary": "If the first parameter is not empty the function displays the second argument.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -78,19 +93,23 @@
       [
         {
           "Name": "string1",
-          "Summary": "First string to be compared."
+          "Summary": "First string to be compared.",
+          "ForcePositional": true
         },
         {
           "Name": "string2",
-          "Summary": "Second string to be compared."
+          "Summary": "Second string to be compared.",
+          "ForcePositional": true
         },
         {
           "Name": "value if identical",
-          "Summary": "Returned value if string1 and string2 are identical."
+          "Summary": "Returned value if string1 and string2 are identical.",
+          "ForcePositional": true
         },
         {
           "Name": "value if different",
-          "Summary": "Returned value if string1 and string2 are different."
+          "Summary": "Returned value if string1 and string2 are different.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -102,27 +121,33 @@
       [
         {
           "Name": "module name",
-          "Summary": "Module name."
+          "Summary": "Module name.",
+          "ForcePositional": true
         },
         {
           "Name": "function name",
-          "Summary": "Function name."
+          "Summary": "Function name.",
+          "ForcePositional": true
         },
         {
           "Name": "arg1",
-          "Summary": "First argument passed to the function."
+          "Summary": "First argument passed to the function.",
+          "ForcePositional": true
         },
         {
           "Name": "arg2",
-          "Summary": "First argument passed to the function."
+          "Summary": "First argument passed to the function.",
+          "ForcePositional": true
         },
         {
           "Name": "arg3",
-          "Summary": "First argument passed to the function."
+          "Summary": "First argument passed to the function.",
+          "ForcePositional": true
         },
         {
           "Name": "…",
-          "Summary": "The rest of arguments passed to the function."
+          "Summary": "The rest of arguments passed to the function.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -134,11 +159,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -150,7 +177,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -162,7 +190,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -174,23 +203,28 @@
       [
         {
           "Name": "comparison string",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "case1=result1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "case2=result2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "case3=result3",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "#default=default result",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -202,23 +236,28 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "attribute1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "attribute2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "name",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -230,7 +269,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -242,7 +282,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -284,15 +325,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "action",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -304,7 +348,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -405,11 +450,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple defaultsortkeys are used on one page or to make this defaultsort do nothing if a defaultsort was already specified earlier in the page."
+          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple defaultsortkeys are used on one page or to make this defaultsort do nothing if a defaultsort was already specified earlier in the page.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -436,11 +483,13 @@
       [
         {
           "Name": "1",
-          "Summary": "Title"
+          "Summary": "Title",
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple displaytitles are used on one page or to make this displaytitle do nothing if a displaytitle was already specified earlier in the page."
+          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple displaytitles are used on one page or to make this displaytitle do nothing if a displaytitle was already specified earlier in the page.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -452,11 +501,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -468,11 +519,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -494,15 +547,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "action",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -514,19 +570,23 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "3",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "4",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -538,11 +598,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -554,7 +616,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -566,7 +629,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -638,15 +702,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "printable",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -668,7 +735,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -690,7 +758,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -702,7 +771,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -714,7 +784,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -751,7 +822,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -773,7 +845,8 @@
       [
         {
           "Name": "1",
-          "Summary": "Group name."
+          "Summary": "Group name.",
+          "ForcePositional": true
         }
       ]
     ]
@@ -785,15 +858,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "3",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -805,15 +881,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "3",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -825,7 +904,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -837,7 +917,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -854,7 +935,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -866,7 +948,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -881,11 +964,13 @@
       [
         {
           "Name": "1",
-          "Summary": "Category name."
+          "Summary": "Category name.",
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": "The number of specified kind of pages only.\n`all`: all pages\n`pages`: ordinary pages (excluding subcategories and files)\n`subcats`: subcategories\n`files`: files"
+          "Summary": "The number of specified kind of pages only.\n`all`: all pages\n`pages`: ordinary pages (excluding subcategories and files)\n`subcats`: subcategories\n`files`: files",
+          "ForcePositional": true
         }
       ]
     ]
@@ -900,7 +985,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -912,11 +998,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -928,15 +1016,18 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "3",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -948,11 +1039,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -964,11 +1057,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -980,7 +1075,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -992,7 +1088,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1004,7 +1101,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1016,7 +1114,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1028,7 +1127,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1045,7 +1145,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1057,7 +1158,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1069,7 +1171,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1126,7 +1229,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1163,7 +1267,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1180,7 +1285,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1192,7 +1298,8 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]
@@ -1204,11 +1311,13 @@
       [
         {
           "Name": "1",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         },
         {
           "Name": "2",
-          "Summary": null
+          "Summary": null,
+          "ForcePositional": true
         }
       ]
     ]

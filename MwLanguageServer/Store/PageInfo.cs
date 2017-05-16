@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using LanguageServer.VsCode.Contracts;
 using MwLanguageServer.Localizable;
+using Newtonsoft.Json;
 
 namespace MwLanguageServer.Store
 {
@@ -67,26 +68,44 @@ namespace MwLanguageServer.Store
 
     public class TemplateArgumentInfo
     {
-        public TemplateArgumentInfo(string name, string summary)
+        public TemplateArgumentInfo(string name, string summary) : this(name, summary, false)
+        {
+        }
+
+        [JsonConstructor]
+        public TemplateArgumentInfo(string name, string summary, bool forcePositional)
         {
             Name = name;
             Summary = summary;
+            ForcePositional = forcePositional;
         }
 
         public string Name { get; }
 
         public string Summary { get; }
 
+        public bool ForcePositional { get; }
+
         /// <inheritdoc />
         public override string ToString() => "{{{" + Name + "}}}";
 
         public ParameterInformation ToParameterInformation()
         {
-            var summary = Summary;
-            if (!string.IsNullOrEmpty(summary)) summary += "\n\n";
-            summary += Prompts.UsageColon;
-            summary += "|" + Name + "=…";
-            return new ParameterInformation(Name, summary);
+            var sb = new StringBuilder(Summary);
+            if (!string.IsNullOrEmpty(Summary)) sb.Append("\n\n");
+            sb.Append(Prompts.UsageColon);
+            var positional = false;
+            if (ForcePositional || int.TryParse(Name, out _))
+            {
+                positional = true;
+                sb.Append("| <…>");
+            }
+            if (!ForcePositional)
+            {
+                if (positional) sb.Append(Prompts.Or);
+                sb.AppendFormat("|{0}= …", Name);
+            }
+            return new ParameterInformation(Name, sb.ToString());
         }
     }
 }

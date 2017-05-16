@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using LanguageServer.VsCode.Contracts;
 using MwLanguageServer.Infrastructures;
 using MwLanguageServer.Localizable;
@@ -50,23 +52,38 @@ namespace MwLanguageServer.Store
             }
         }
 
+        private static Regex lastWordingPrefixMatcher = new Regex(@"\w+$", RegexOptions.RightToLeft);
+
         public IEnumerable<CompletionItem> GetTemplateCompletionItems(string prefix)
+        {
+            // Issue#1 Find the rightmost starting position of non-symbol characters.
+            // E.g.   #switch
+            //         ^ Find this index
+            //        test-page-name
+            //                  ^ Find this index
+            var lastWordingPrefix = lastWordingPrefixMatcher.Match(prefix);
+            var lastWordingPrefixIndex = lastWordingPrefix.Success ? lastWordingPrefix.Index : -1;
+            return EnumTemplates(prefix).Select(ti =>
+            {
+                (var name, var template) = ti;
+                var lastWordingPart = lastWordingPrefixIndex > 0 ? name.Substring(lastWordingPrefixIndex) : name;
+                return new CompletionItem(lastWordingPart, CompletionItemKind.Keyword,
+                    template.Summary, template.GetDocumentation(), lastWordingPart)
+                { InsertText = lastWordingPart };
+            });
+        }
+
+        private IEnumerable<(string, MagicTemplateInfo)> EnumTemplates(string prefix)
         {
             lock (caseSensitiveDict)
             {
                 foreach (var p in caseSensitiveDict.WithPrefix(prefix))
-                {
-                    yield return new CompletionItem((string) p.Key, CompletionItemKind.Keyword,
-                        p.Value.Summary, (string) p.Key);
-                }
+                    yield return ((string) p.Key, p.Value);
             }
             lock (caseInsensitiveDict)
             {
                 foreach (var p in caseInsensitiveDict.WithPrefix(prefix))
-                {
-                    yield return new CompletionItem((string) p.Key, CompletionItemKind.Keyword,
-                        p.Value.Summary, (string) p.Key);
-                }
+                    yield return ((string)p.Key, p.Value);
             }
         }
     }

@@ -182,6 +182,21 @@ namespace MwLanguageServer.Linter
             return null;
         }
 
+        /// <summary>
+        /// Gets the text to the left-hand-side of the cart. Used for auto-completion.
+        /// </summary>
+        private string GetTypedLhsText(InlineContainer node, Position caretPosition)
+        {
+            var firstPt = node?.Inlines.FirstNode as PlainText;
+            if (firstPt == null) return null;
+            IWikitextLineInfo li = node;
+            Debug.Assert(li.HasLineInfo);
+            var startPos = new Position(li.StartLineNumber, li.StartLinePosition);
+            Debug.Assert(startPos <= caretPosition);
+            Debug.Assert(new Position(li.EndLineNumber, li.EndLinePosition) >= caretPosition);
+            return TextDocument.GetRange(new Range(startPos, caretPosition));
+        }
+
         public IEnumerable<CompletionItem> GetCompletionItems(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
         {
             var node = TraceNode(position);
@@ -193,7 +208,7 @@ namespace MwLanguageServer.Linter
                     case Template template:
                         if (lastNode != null && lastNode == template.Name)
                         {
-                            var enteredName = lastNode.ToString();
+                            var enteredName = GetTypedLhsText(template.Name, position);
                             return magicStore.GetTemplateCompletionItems(enteredName)
                                 .Concat(store.GetTemplateCompletionItems());
                         }
@@ -201,7 +216,7 @@ namespace MwLanguageServer.Linter
                     case WikiLink wikiLink:
                         if (lastNode != null && lastNode == wikiLink.Target)
                         {
-                            var enteredName = lastNode.ToString();
+                            var enteredName = GetTypedLhsText(wikiLink.Target, position);
                             return store.GetWikiLinkCompletionItems();
                         }
                         return null;

@@ -116,6 +116,15 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似  or  的本地化字符串。
+        /// </summary>
+        internal static string Or {
+            get {
+                return ResourceManager.GetString("Or", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Template Argument 的本地化字符串。
         /// </summary>
         internal static string TemplateArgumentNode {
