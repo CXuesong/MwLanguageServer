@@ -2,7 +2,7 @@
 
 A work in (slow) progress .NET [Language Server](https://github.com/Microsoft/language-server-protocol) and client-side plugin of [Wikitext](https://en.wikipedia.org/wiki/Wiki_markup) for VSCode. The client-side plugin for VSCode is named Wikitext. Both the Language Server and the client-side plugin are at their very early stage.
 
-![Snapshot-TemplateHint2](E:\My Files\Visual Studio 2017\Projects\WikiClient\MwLanguageServer\README.resource\Snapshot-TemplateHint1.gif)
+![Snapshot-TemplateHint2](README.resource\Snapshot-TemplateHint2.gif)
 
 Emm, in fact I only copied documentations for a small number of magic words by hand… That's an issue to resolve.
 
