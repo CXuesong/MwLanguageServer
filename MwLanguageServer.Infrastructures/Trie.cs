@@ -83,11 +83,15 @@ namespace MwLanguageServer.Infrastructures
         private Node GetNode(IEnumerable<TKeyElement> prefix, bool allowInsertion, bool prefixMode)
         {
             Debug.Assert(prefix != null);
+            Debug.Assert(!(allowInsertion && prefixMode));
             using (var enu = prefix.GetEnumerator())
             {
                 var hasMore = enu.MoveNext();
+                if (!hasMore)       // Empty sequence
+                {
+                    return prefixMode ? root : null;
+                }
                 var curKey = enu.Current;
-                if (!prefixMode && !hasMore) return null;
                 var current = root;
                 while (true)
                 {
@@ -139,8 +143,8 @@ namespace MwLanguageServer.Infrastructures
             using (var enu = key.GetEnumerator())
             {
                 var hasMore = enu.MoveNext();
+                if (!hasMore) return false;     // Empty sequence.
                 var curKey = enu.Current;
-                Debug.Assert(hasMore);
                 if (root == null) return false;
                 var current = root;
                 while (true)
