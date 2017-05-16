@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Server;
@@ -107,6 +108,9 @@ namespace MwLanguageServer.Linter
                     case WikiLink wl:
                         CheckNode(wl, e);
                         break;
+                    case PlainText pt:
+                        CheckNode(pt, e);
+                        break;
                 }
             }
         }
@@ -149,6 +153,16 @@ namespace MwLanguageServer.Linter
         {
             if (string.IsNullOrWhiteSpace(link.Target?.ToString()))
                 e.EmptyWikilinkTarget(link.ToRange());
+        }
+
+        private static readonly Regex magicLinkMatcher =
+            new Regex(@"\b((RFC|PMID)\s+\d+|ISBN\s+(97[89]-?)?(\d-?){9}[\dX])\b", RegexOptions.IgnoreCase);
+
+        private void CheckNode(PlainText pt, DiagnosticEmitter e)
+        {
+            if (string.IsNullOrEmpty(pt.Content)) return;
+            if (magicLinkMatcher.IsMatch(pt.Content))
+                e.HardCodedMagicLink(pt.ToRange());
         }
     }
 }

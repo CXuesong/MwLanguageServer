@@ -77,5 +77,10 @@ namespace MwLanguageServer.Linter
         {
             Warn(range, D.EmptyWikilinkTarget);
         }
+
+        public void HardCodedMagicLink(Range range)
+        {
+            Info(range, D.HardCodedMagicLink);
+        }
     }
 }

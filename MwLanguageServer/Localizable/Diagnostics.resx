@@ -129,6 +129,9 @@
   <data name="EmptyWikilinkTarget" xml:space="preserve">
     <value>Empty Wikilink target.</value>
   </data>
+  <data name="HardCodedMagicLink" xml:space="preserve">
+    <value>Use external link or related templates in preference to hard-coded magic link expression. See https://www.mediawiki.org/wiki/Help:Magic_links for more information.</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>Open tag is implicitly closed by end of line.</value>
   </data>

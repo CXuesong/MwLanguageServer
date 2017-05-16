@@ -98,6 +98,15 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似 Use external link or related templates in preference to hard-coded magic link expression. See https://www.mediawiki.org/wiki/Help:Magic_links for more information. 的本地化字符串。
+        /// </summary>
+        internal static string HardCodedMagicLink {
+            get {
+                return ResourceManager.GetString("HardCodedMagicLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Open tag is implicitly closed by end of line. 的本地化字符串。
         /// </summary>
         internal static string OpenTagClosedByEndOfLine {

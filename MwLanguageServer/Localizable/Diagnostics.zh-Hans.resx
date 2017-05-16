@@ -129,6 +129,9 @@
   <data name="EmptyWikilinkTarget" xml:space="preserve">
     <value>维基链接目标为空。</value>
   </data>
+  <data name="HardCodedMagicLink" xml:space="preserve">
+    <value>建议使用普通的外部链接，或相关模板来替代硬编码的魔术链接。请参阅： https://www.mediawiki.org/wiki/Help:Magic_links 。</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>起始标记被行尾隐式结束。</value>
   </data>
