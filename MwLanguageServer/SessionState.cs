@@ -46,6 +46,16 @@ namespace MwLanguageServer
 
         public MagicTemplateInfoStore MagicTemplateInfoStore { get; } = new MagicTemplateInfoStore();
 
+        public WikitextParser WiktextParser { get; } = new WikitextParser
+        {
+            Options = new WikitextParserOptions
+            {
+                AllowEmptyTemplateName = true,
+                AllowEmptyWikiLinkTarget = true,
+                AllowClosingMarkInference = true,
+            }
+        };
+
         public void Attach(DocumentState doc)
         {
             doc.DocumentChanged += DocumentState_DocumentChanged;

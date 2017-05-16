@@ -26,13 +26,6 @@ namespace MwLanguageServer.Linter
 
         private TextDocument document;
 
-        private Range RangeOf(IWikitextSpanInfo thisNode)
-        {
-            Debug.Assert(thisNode.HasSpanInfo);
-            return new Range(document.PositionAt(thisNode.Start),
-                document.PositionAt(thisNode.Start + thisNode.Length));
-        }
-
         public WikitextParser Parser { get; }
 
         public LintedWikitextDocument Lint(TextDocument doc, CancellationToken ct)
@@ -74,11 +67,11 @@ namespace MwLanguageServer.Linter
                             // a line-break will reset either bold or itablics
                             if (boldSwitch != null)
                             {
-                                yield return df.OpenTagClosedByEndOfLine(RangeOf(boldSwitch));
+                                yield return df.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
                             }
                             if (italicsSwitch != null && italicsSwitch != boldSwitch)
                             {
-                                yield return df.OpenTagClosedByEndOfLine(RangeOf(italicsSwitch));
+                                yield return df.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
                                 boldSwitch = null;
                             }
                             boldSwitch = null;
@@ -90,11 +83,11 @@ namespace MwLanguageServer.Linter
             }
             if (boldSwitch != null)
             {
-                yield return df.OpenTagClosedByEndOfLine(RangeOf(boldSwitch));
+                yield return df.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
             }
             if (italicsSwitch != null && italicsSwitch != boldSwitch)
             {
-                yield return df.OpenTagClosedByEndOfLine(RangeOf(italicsSwitch));
+                yield return df.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
                 boldSwitch = null;
             }
         }
@@ -109,7 +102,7 @@ namespace MwLanguageServer.Linter
                     foreach (var p in tp.Arguments.EnumNameArgumentPairs())
                     {
                         if (!names.Add(p.Key))
-                            yield return df.DuplicateTemplateArgument(RangeOf(p.Value), p.Key, MwParserUtility.NormalizeTitle(tp.Name));
+                            yield return df.DuplicateTemplateArgument(p.Value.ToRange(), p.Key, MwParserUtility.NormalizeTitle(tp.Name));
                     }
                 } else if (node is TagNode tag)
                 {
@@ -119,7 +112,7 @@ namespace MwLanguageServer.Linter
                         if (attr.Name == null) continue;
                         var name = attr.Name.ToString().Trim();
                         if (!names.Add(name))
-                            yield return df.DuplicateTagAttribute(RangeOf(attr), name, tag.Name);
+                            yield return df.DuplicateTagAttribute(attr.ToRange(), name, tag.Name);
                     }
                 }
             }

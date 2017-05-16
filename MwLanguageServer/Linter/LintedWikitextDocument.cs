@@ -86,11 +86,11 @@ namespace MwLanguageServer.Linter
 
         public Hover GetHover(Position position)
         {
-            var node = TraceNode(position, 0);
+            var node = TraceNode(position);
             if (node == null) return null;
             Node prevNode = null;
             var nodeTrace = new List<string>();
-            IWikitextSpanInfo focusNode = null;
+            IWikitextLineInfo focusNode = null;
             while (node != null)
             {
                 switch (node)
@@ -119,16 +119,14 @@ namespace MwLanguageServer.Linter
                 node = node.ParentNode;
             }
             if (focusNode == null) return null;
-            Debug.Assert(focusNode.HasSpanInfo);
+            Debug.Assert(focusNode.HasLineInfo);
             nodeTrace.Reverse();
-            return new Hover(string.Join(" → ", nodeTrace), new Range(
-                TextDocument.PositionAt(focusNode.Start),
-                TextDocument.PositionAt(focusNode.Start + focusNode.Length)));
+            return new Hover(string.Join(" → ", nodeTrace), focusNode.ToRange());
         }
 
         public SignatureHelp GetSignatureHelp(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
         {
-            var node = TraceNode(position, 0);
+            var node = TraceNode(position);
             Node lastNode = null;
             while (node != null)
             {
@@ -186,8 +184,7 @@ namespace MwLanguageServer.Linter
 
         public IEnumerable<CompletionItem> GetCompletionItems(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
         {
-            var offset = TextDocument.OffsetAt(position);
-            var node = TraceNode(offset);
+            var node = TraceNode(position);
             Node lastNode = null;
             while (node != null)
             {
@@ -196,8 +193,7 @@ namespace MwLanguageServer.Linter
                     case Template template:
                         if (lastNode != null && lastNode == template.Name)
                         {
-                            var start = ((IWikitextSpanInfo)lastNode).Start;
-                            var enteredName = TextDocument.GetRange(start, offset - start).Trim();
+                            var enteredName = lastNode.ToString();
                             return magicStore.GetTemplateCompletionItems(enteredName)
                                 .Concat(store.GetTemplateCompletionItems());
                         }
@@ -205,7 +201,7 @@ namespace MwLanguageServer.Linter
                     case WikiLink wikiLink:
                         if (lastNode != null && lastNode == wikiLink.Target)
                         {
-                            var start = ((IWikitextSpanInfo)lastNode).Start;
+                            var enteredName = lastNode.ToString();
                             return store.GetWikiLinkCompletionItems();
                         }
                         return null;
@@ -216,25 +212,22 @@ namespace MwLanguageServer.Linter
             return null;
         }
 
-        private Node TraceNode(Position position, int offset)
+        private Node TraceNode(Position position)
         {
-            return TraceNode(Math.Max(0, TextDocument.OffsetAt(position) + offset));
+            return TraceNode(_Root, position);
         }
 
-        private Node TraceNode(int offset)
-        {
-            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
-            return TraceNode(_Root, offset);
-        }
-
-        private Node TraceNode(Node root, int offset)
+        private Node TraceNode(Node root, Position position)
         {
             foreach (var node in root.EnumChildren())
             {
-                IWikitextSpanInfo span = node;
-                Debug.Assert(span.HasSpanInfo);
-                if (offset >= span.Start && offset <= span.Start + span.Length)
-                    return TraceNode(node, offset);
+                IWikitextLineInfo span = node;
+                Debug.Assert(span.HasLineInfo);
+                if (span.StartLineNumber > position.Line) continue;
+                if (span.EndLineNumber < position.Line) continue;
+                if (span.StartLineNumber == position.Line && span.StartLinePosition > position.Character) continue;
+                if (span.EndLineNumber == position.Line && span.EndLinePosition < position.Character) continue;
+                return TraceNode(node, position);
             }
             return root;
         }

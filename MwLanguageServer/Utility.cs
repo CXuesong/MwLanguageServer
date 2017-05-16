@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using LanguageServer.VsCode.Contracts;
 using Microsoft.Extensions.Configuration;
 using MwLanguageServer.Localizable;
 using MwParserFromScratch;
@@ -94,15 +95,15 @@ namespace MwLanguageServer
 
         private static string WikiTitleMd(Node node)
         {
-            IWikitextSpanInfo span = node;
-            if (node == null || span.HasSpanInfo && span.Length == 0) return "…";
+            var text = node?.ToPlainText();
+            if (string.IsNullOrEmpty(text)) return "…";
             return EscapeMd(MwParserUtility.NormalizeTitle(node));
         }
 
         private static string WikiArgumentMd(Node node)
         {
-            IWikitextSpanInfo span = node;
-            if (node == null || span.HasSpanInfo && span.Length == 0) return "…";
+            var text = node?.ToPlainText();
+            if (string.IsNullOrEmpty(text)) return "…";
             return EscapeMd(MwParserUtility.NormalizeTemplateArgumentName(node));
         }
 
@@ -162,6 +163,14 @@ namespace MwLanguageServer
             if (title == null) throw new ArgumentNullException(nameof(title));
             Debug.Assert(title == MwParserUtility.NormalizeTitle(title));
             return title.StartsWith("Template:");
+        }
+
+        public static Range ToRange(this IWikitextLineInfo thisNode)
+        {
+            if (thisNode == null) throw new ArgumentNullException(nameof(thisNode));
+            Debug.Assert(thisNode.HasLineInfo);
+            return new Range(thisNode.StartLineNumber, thisNode.StartLinePosition,
+                thisNode.EndLineNumber, thisNode.EndLinePosition);
         }
     }
 }
