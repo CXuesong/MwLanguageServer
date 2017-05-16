@@ -16,7 +16,7 @@ namespace MwLanguageServer.Linter
     public class LintedWikitextDocument
     {
 
-        public LintedWikitextDocument(TextDocument textDocument, Wikitext root, IList<Diagnostic> diagnostics)
+        public LintedWikitextDocument(TextDocument textDocument, Wikitext root, ICollection<Diagnostic> diagnostics)
         {
             if (textDocument == null) throw new ArgumentNullException(nameof(textDocument));
             if (root == null) throw new ArgumentNullException(nameof(root));
@@ -30,7 +30,7 @@ namespace MwLanguageServer.Linter
 
         public TextDocument TextDocument { get; }
 
-        public IList<Diagnostic> Diagnostics { get; }
+        public ICollection<Diagnostic> Diagnostics { get; }
 
         /// <summary>
         /// Inferss linked/transcluded pages information, and stores it into global store.

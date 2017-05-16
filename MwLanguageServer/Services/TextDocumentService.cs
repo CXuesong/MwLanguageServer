@@ -48,9 +48,7 @@ namespace MwLanguageServer.Services
         [JsonRpcMethod(IsNotification = true)]
         public void DidOpen(TextDocumentItem textDocument)
         {
-            var doc = new DocumentState(TextDocument.Load<FullTextDocument>(textDocument), loggerFactory);
-            Session.DocumentStates[textDocument.Uri] = doc;
-            Session.Attach(doc);
+            var doc = Session.AddOrUpdateDocument(textDocument);
             doc.RequestAnalysis();
         }
 
@@ -76,9 +74,6 @@ namespace MwLanguageServer.Services
                 await Session.ClientProxy.Document.PublishDiagnostics(textDocument.Uri, Diagnostic.EmptyDiagnostics);
             }
         }
-
-        private static readonly Regex leftBracketMatcher =
-            new Regex(@"((?<!\{)\{\{\{?|(?<!\[)\[\[)(?=[^\r\n\|\}\]]*\B)", RegexOptions.RightToLeft);
 
         [JsonRpcMethod]
         public async Task<CompletionList> Completion(TextDocumentIdentifier textDocument, Position position,

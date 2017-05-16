@@ -80,11 +80,47 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似 Empty transclusion target. 的本地化字符串。
+        /// </summary>
+        internal static string EmptyTransclusionTarget {
+            get {
+                return ResourceManager.GetString("EmptyTransclusionTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Empty Wikilink target. 的本地化字符串。
+        /// </summary>
+        internal static string EmptyWikilinkTarget {
+            get {
+                return ResourceManager.GetString("EmptyWikilinkTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Open tag is implicitly closed by end of line. 的本地化字符串。
         /// </summary>
         internal static string OpenTagClosedByEndOfLine {
             get {
                 return ResourceManager.GetString("OpenTagClosedByEndOfLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Open tag &quot;{0}&quot; is not closed. 的本地化字符串。
+        /// </summary>
+        internal static string OpenTagNotClosed {
+            get {
+                return ResourceManager.GetString("OpenTagNotClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Transclusion expression &quot;{0}&quot; is not closed. 的本地化字符串。
+        /// </summary>
+        internal static string TransclusionNotClosed {
+            get {
+                return ResourceManager.GetString("TransclusionNotClosed", resourceCulture);
             }
         }
     }

@@ -123,7 +123,19 @@
   <data name="DuplicateTemplateArgument" xml:space="preserve">
     <value>重复的模板参数：“{1}”中的“{0}”。</value>
   </data>
+  <data name="EmptyTransclusionTarget" xml:space="preserve">
+    <value>模板或参数引用目标为空。</value>
+  </data>
+  <data name="EmptyWikilinkTarget" xml:space="preserve">
+    <value>维基链接目标为空。</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>起始标记被行尾隐式结束。</value>
+  </data>
+  <data name="OpenTagNotClosed" xml:space="preserve">
+    <value>起始标记“{0}”未被闭合。</value>
+  </data>
+  <data name="TransclusionNotClosed" xml:space="preserve">
+    <value>模板引用表达式“{0}”未被闭合。</value>
   </data>
 </root>

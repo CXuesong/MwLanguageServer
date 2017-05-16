@@ -22,35 +22,31 @@ namespace MwLanguageServer.Linter
             Parser = parser;
         }
 
-        private static readonly DiagnosticFactory df = new DiagnosticFactory();
-
-        private TextDocument document;
-
         public WikitextParser Parser { get; }
 
         public LintedWikitextDocument Lint(TextDocument doc, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
-            document = doc;
+            var emitter = new DiagnosticEmitter();
+            //document = doc;
             try
             {
                 var ast = Parser.Parse(doc.Content);
                 ct.ThrowIfCancellationRequested();
-                var diag = new List<Diagnostic>();
-                diag.AddRange(CheckMatchingPairs(ast));
+                CheckMatchingPairs(ast, emitter);
                 ct.ThrowIfCancellationRequested();
-                diag.AddRange(CheckDuplicateArguments(ast));
-                return new LintedWikitextDocument(doc, ast, diag);
+                CheckNodes(ast, emitter, ct);
+                return new LintedWikitextDocument(doc, ast, emitter.Diagnostics);
             }
             finally
             {
-                document = null;
+                //document = null;
             }
         }
 
         private static readonly char[] newLineCharacters = {'\r', '\n'};
 
-        private IEnumerable<Diagnostic> CheckMatchingPairs(Node root)
+        private void CheckMatchingPairs(Node root, DiagnosticEmitter e)
         {
             FormatSwitch boldSwitch = null, italicsSwitch = null;
             foreach (var node in root.EnumChildren())
@@ -67,11 +63,11 @@ namespace MwLanguageServer.Linter
                             // a line-break will reset either bold or itablics
                             if (boldSwitch != null)
                             {
-                                yield return df.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
+                                e.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
                             }
                             if (italicsSwitch != null && italicsSwitch != boldSwitch)
                             {
-                                yield return df.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
+                                e.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
                                 boldSwitch = null;
                             }
                             boldSwitch = null;
@@ -79,43 +75,80 @@ namespace MwLanguageServer.Linter
                         }
                         break;
                 }
-                foreach (var diag in CheckMatchingPairs(node)) yield return diag;
+                CheckMatchingPairs(node, e);
             }
             if (boldSwitch != null)
             {
-                yield return df.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
+                e.OpenTagClosedByEndOfLine(boldSwitch.ToRange());
             }
             if (italicsSwitch != null && italicsSwitch != boldSwitch)
             {
-                yield return df.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
+                e.OpenTagClosedByEndOfLine(italicsSwitch.ToRange());
                 boldSwitch = null;
             }
         }
 
-        private IEnumerable<Diagnostic> CheckDuplicateArguments(Node root)
+        private void CheckNodes(Node root, DiagnosticEmitter e, CancellationToken ct)
         {
             foreach (var node in root.EnumDescendants())
             {
-                if (node is Template tp)
+                ct.ThrowIfCancellationRequested();
+                switch (node)
                 {
-                    var names = new HashSet<string>();
-                    foreach (var p in tp.Arguments.EnumNameArgumentPairs())
-                    {
-                        if (!names.Add(p.Key))
-                            yield return df.DuplicateTemplateArgument(p.Value.ToRange(), p.Key, MwParserUtility.NormalizeTitle(tp.Name));
-                    }
-                } else if (node is TagNode tag)
-                {
-                    var names = new HashSet<string>();
-                    foreach (var attr in tag.Attributes)
-                    {
-                        if (attr.Name == null) continue;
-                        var name = attr.Name.ToString().Trim();
-                        if (!names.Add(name))
-                            yield return df.DuplicateTagAttribute(attr.ToRange(), name, tag.Name);
-                    }
+                    case Template t:
+                        CheckNode(t, e);
+                        break;
+                    case ArgumentReference ar:
+                        CheckNode(ar, e);
+                        break;
+                    case TagNode tn:
+                        CheckNode(tn, e);
+                        break;
+                    case WikiLink wl:
+                        CheckNode(wl, e);
+                        break;
                 }
             }
+        }
+
+        private void CheckNode(Template template, DiagnosticEmitter e)
+        {
+            if (((IWikitextParsingInfo) template).InferredClosingMark)
+                e.TransclusionNotClosed(template.ToRange(), MwParserUtility.NormalizeTitle(template.Name));
+            if (string.IsNullOrWhiteSpace(template.Name?.ToString()))
+                e.EmptyTransclusionTarget(template.ToRange());
+            var names = new HashSet<string>();
+            foreach (var p in template.Arguments.EnumNameArgumentPairs())
+            {
+                if (!names.Add(p.Key))
+                    e.DuplicateTemplateArgument(p.Value.ToRange(), p.Key, MwParserUtility.NormalizeTitle(template.Name));
+            }
+        }
+
+        private void CheckNode(ArgumentReference ar, DiagnosticEmitter e)
+        {
+            if (((IWikitextParsingInfo)ar).InferredClosingMark)
+                e.TransclusionNotClosed(ar.ToRange(), ar.Name?.ToString());
+        }
+
+        private void CheckNode(TagNode tn, DiagnosticEmitter e)
+        {
+            if (((IWikitextParsingInfo)tn).InferredClosingMark)
+                e.OpenTagNotClosed(tn.ToRange(), tn.Name);
+            var names = new HashSet<string>();
+            foreach (var attr in tn.Attributes)
+            {
+                if (attr.Name == null) continue;
+                var name = attr.Name.ToString().Trim();
+                if (!names.Add(name))
+                    e.DuplicateTagAttribute(attr.ToRange(), name, tn.Name);
+            }
+        }
+
+        private void CheckNode(WikiLink link, DiagnosticEmitter e)
+        {
+            if (string.IsNullOrWhiteSpace(link.Target?.ToString()))
+                e.EmptyWikilinkTarget(link.ToRange());
         }
     }
 }

@@ -123,7 +123,19 @@
   <data name="DuplicateTemplateArgument" xml:space="preserve">
     <value>Duplicate template argument "{0}" in "{1}".</value>
   </data>
+  <data name="EmptyTransclusionTarget" xml:space="preserve">
+    <value>Empty transclusion target.</value>
+  </data>
+  <data name="EmptyWikilinkTarget" xml:space="preserve">
+    <value>Empty Wikilink target.</value>
+  </data>
   <data name="OpenTagClosedByEndOfLine" xml:space="preserve">
     <value>Open tag is implicitly closed by end of line.</value>
+  </data>
+  <data name="OpenTagNotClosed" xml:space="preserve">
+    <value>Open tag "{0}" is not closed.</value>
+  </data>
+  <data name="TransclusionNotClosed" xml:space="preserve">
+    <value>Transclusion expression "{0}" is not closed.</value>
   </data>
 </root>

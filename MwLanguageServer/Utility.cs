@@ -172,5 +172,10 @@ namespace MwLanguageServer
             return new Range(thisNode.StartLineNumber, thisNode.StartLinePosition,
                 thisNode.EndLineNumber, thisNode.EndLinePosition);
         }
+
+        public static Range CollapseToEnd(this Range range)
+        {
+            return new Range(range.End, range.End);
+        }
     }
 }

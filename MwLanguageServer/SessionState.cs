@@ -23,18 +23,20 @@ namespace MwLanguageServer
 {
     public class SessionState
     {
+        private readonly ILoggerFactory loggerFactory;
+
+        private readonly ILogger logger;
+
+        private int needInferPageInfo = 1;
 
         public SessionState(ClientProxy clientProxy, ILoggerFactory loggerFactory)
         {
+            this.loggerFactory = loggerFactory;
             if (clientProxy == null) throw new ArgumentNullException(nameof(clientProxy));
             ClientProxy = clientProxy;
             logger = loggerFactory.CreateLogger<SessionState>();
             MagicTemplateInfoStore.LoadLocalStore();
         }
-
-        private readonly ILogger logger;
-
-        private int needInferPageInfo = 1;
 
         public ClientProxy ClientProxy { get; }
         
@@ -56,7 +58,15 @@ namespace MwLanguageServer
             }
         };
 
-        public void Attach(DocumentState doc)
+        public DocumentState AddOrUpdateDocument(TextDocumentItem doc)
+        {
+            var ds = new DocumentState(TextDocument.Load<FullTextDocument>(doc), WiktextParser, loggerFactory);
+            DocumentStates[doc.Uri] = ds;
+            Attach(ds);
+            return ds;
+        }
+
+        private void Attach(DocumentState doc)
         {
             doc.DocumentChanged += DocumentState_DocumentChanged;
             doc.DocumentLinted += DocumentState_DocumentLinted;
@@ -129,13 +139,13 @@ namespace MwLanguageServer
     public class DocumentState
     {
 
-        public DocumentState(TextDocument doc, ILoggerFactory loggerFactory)
+        public DocumentState(TextDocument doc, WikitextParser parser, ILoggerFactory loggerFactory)
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
             if (loggerFactory == null) throw new ArgumentNullException(nameof(loggerFactory));
             Logger = loggerFactory.CreateLogger<DocumentState>();
             TextDocument = doc;
-            WikitextLinter = new WikitextLinter(new WikitextParser());
+            WikitextLinter = new WikitextLinter(parser);
             DocumentLinter = new TextDocumentLinter(this);
             Synchronizer = new TextDocumentSynchronizer(this);
             DocumentLinter = new TextDocumentLinter(this);
