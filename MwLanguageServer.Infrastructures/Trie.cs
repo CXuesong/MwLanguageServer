@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -72,7 +73,7 @@ namespace MwLanguageServer.Infrastructures
             }
             else
             {
-                var copy = key.ToList().AsReadOnly();
+                var copy = new ReadOnlyCollection<TKeyElement>(key.ToArray());
                 length = copy.Count;
                 return copy;
             }

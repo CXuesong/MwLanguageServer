@@ -125,6 +125,15 @@ namespace MwLanguageServer.Localizable {
         }
         
         /// <summary>
+        ///   查找类似 Redirect:  的本地化字符串。
+        /// </summary>
+        internal static string RedirectColon {
+            get {
+                return ResourceManager.GetString("RedirectColon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Template Argument 的本地化字符串。
         /// </summary>
         internal static string TemplateArgumentNode {

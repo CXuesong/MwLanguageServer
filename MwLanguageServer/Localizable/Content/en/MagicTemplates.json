@@ -2,1324 +2,1093 @@
   {
     "Name": "!",
     "Summary": "Used to include a pipe character as part of a template argument or table cell contents. Before this was added as a magic word, many wikis implemented this by creating Template:! with | as the content.",
-    "Signatures": []
+    "Arguments": null
+  },
+  {
+    "Name": "#formatdate",
+    "RedirectTarget": "#dateformat"
   },
   {
     "Name": "#dateformat",
-    "Aliases": [
-      "#formatdate"
-    ],
     "Summary": "Formats an unlinked date based on user \"date format\" preference, and adds metadata tagging it as a formatted date.",
-    "Signatures": [
-      [
-        {
-          "Name": "date",
-          "Summary": "",
-          "ForcePositional": true
-        }
-      ],
-      [
-        {
-          "Name": "date",
-          "Summary": "",
-          "ForcePositional": true
-        },
-        {
-          "Name": "format",
-          "Choices": [
-            "mdy",
-            "dmy",
-            "ymd"
-          ],
-          "Summary": "For logged-out users and those who have not set a date format in their preferences, dates can be given a default. (all case sensitive)",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "date",
+        "Summary": ""
+      }
     ]
   },
   {
     "Name": "#expr",
     "Summary": "Evaluates expression.",
-    "Signatures": [
-      [
-        {
-          "Name": "expression",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "expression",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#if",
     "Summary": "Evaluates a test string and determines whether or not it is empty.",
-    "Signatures": [
-      [
-        {
-          "Name": "test string",
-          "Summary": "A test string containing only white space is considered to be empty.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "value if not empty",
-          "Summary": "If the first parameter is not empty the function displays the second argument.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "value if empty",
-          "Summary": "If the first parameter is empty or contains only whitespace characters (spaces, newlines, etc.) it displays the third argument.",
-          "ForcePositional": true
-        }
-      ],
-      [
-        {
-          "Name": "test string",
-          "Summary": "A test string containing only white space is considered to be empty.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "value if not empty",
-          "Summary": "If the first parameter is not empty the function displays the second argument.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "test string",
+        "Summary": "A test string containing only white space is considered to be empty."
+      },
+      {
+        "Name": "value if not empty",
+        "Summary": "If the first parameter is not empty the function displays the second argument."
+      },
+      {
+        "Name": "value if empty",
+        "Summary": "If the first parameter is empty or contains only whitespace characters (spaces, newlines, etc.) it displays the third argument."
+      }
     ]
   },
   {
     "Name": "#ifeq",
     "Summary": "Compares two strings and determines whether they are identical.",
     "Remarks": "If both strings are valid numerical values, the strings are compared numerically. Otherwise the comparison is made as text; this comparison is case sensitive.",
-    "Signatures": [
-      [
-        {
-          "Name": "string1",
-          "Summary": "First string to be compared.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "string2",
-          "Summary": "Second string to be compared.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "value if identical",
-          "Summary": "Returned value if string1 and string2 are identical.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "value if different",
-          "Summary": "Returned value if string1 and string2 are different.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "string1",
+        "Summary": "First string to be compared."
+      },
+      {
+        "Name": "string2",
+        "Summary": "Second string to be compared."
+      },
+      {
+        "Name": "value if identical",
+        "Summary": "Returned value if string1 and string2 are identical."
+      },
+      {
+        "Name": "value if different",
+        "Summary": "Returned value if string1 and string2 are different."
+      }
     ]
   },
   {
     "Name": "#invoke",
     "Summary": "Execute a Lua module. Only available when the Extension:Scribunto is installed.",
-    "Signatures": [
-      [
-        {
-          "Name": "module name",
-          "Summary": "Module name.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "function name",
-          "Summary": "Function name.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "arg1",
-          "Summary": "First argument passed to the function.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "arg2",
-          "Summary": "First argument passed to the function.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "arg3",
-          "Summary": "First argument passed to the function.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "…",
-          "Summary": "The rest of arguments passed to the function.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "module name",
+        "Summary": "Module name."
+      },
+      {
+        "Name": "function name",
+        "Summary": "Function name."
+      },
+      {
+        "Name": "arg1",
+        "Summary": "First argument passed to the function."
+      },
+      {
+        "Name": "arg2",
+        "Summary": "First argument passed to the function."
+      },
+      {
+        "Name": "arg3",
+        "Summary": "First argument passed to the function."
+      },
+      {
+        "Name": "…",
+        "Summary": "The rest of arguments passed to the function."
+      }
     ]
   },
   {
     "Name": "#language",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#special",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#speciale",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#switch",
     "Summary": "Compare one input value against several test cases, returning an associated string if a match is found.",
-    "Signatures": [
-      [
-        {
-          "Name": "comparison string",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "case1=result1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "case2=result2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "case3=result3",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "#default=default result",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "comparison string",
+        "Summary": null
+      },
+      {
+        "Name": "case1=result1",
+        "Summary": null
+      },
+      {
+        "Name": "case2=result2",
+        "Summary": null
+      },
+      {
+        "Name": "case3=result3",
+        "Summary": null
+      },
+      {
+        "Name": "#default=default result",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#tag",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "attribute1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "attribute2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "name",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "attribute1",
+        "Summary": null
+      },
+      {
+        "Name": "attribute2",
+        "Summary": null
+      },
+      {
+        "Name": "name",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "#titleparts",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Anchorencode",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "ARTICLEPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "ARTICLEPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "ARTICLESPACE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "ARTICLESPACEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "BASEPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "BASEPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "Canonicalurl",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "action",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "action",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "CASCADINGSOURCES",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "CONTENTLANG",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CONTENTLANGUAGE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTDAY",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTDAY2",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTDAYNAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTDOW",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTHOUR",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTMONTH",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTMONTH1",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTMONTHABBREV",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTMONTHNAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTMONTHNAMEGEN",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTTIME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTTIMESTAMP",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTVERSION",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTWEEK",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "CURRENTYEAR",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
+  },
+  {
+    "Name": "DEFAULTSORTKEY",
+    "RedirectTarget": "DEFAULTSORT"
+  },
+  {
+    "Name": "DEFAULTCATEGORYSORT",
+    "RedirectTarget": "DEFAULTSORT"
   },
   {
     "Name": "DEFAULTSORT",
-    "Aliases": [
-      "DEFAULTSORTKEY",
-      "DEFAULTCATEGORYSORT"
-    ],
     "Summary": "Used for categorizing pages, sets a default category sort key. For example if you put {{DEFAULTSORT:Smith , John}} at the end of John Smith, the page would be sorted under \"S\" by default in categories.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple defaultsortkeys are used on one page or to make this defaultsort do nothing if a defaultsort was already specified earlier in the page.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple defaultsortkeys are used on one page or to make this defaultsort do nothing if a defaultsort was already specified earlier in the page."
+      }
     ]
   },
   {
     "Name": "DEFAULTSORTKEY:Sortkey",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "DIRECTIONMARK",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "DIRMARK",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "DISPLAYTITLE",
     "Summary": "Format the current page's title header. The value must be equivalent to the default title: only capitalization changes to certain parts of the title (not all) and replacing spaces with underscores are allowed.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": "Title",
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple displaytitles are used on one page or to make this displaytitle do nothing if a displaytitle was already specified earlier in the page.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "title format",
+        "Summary": "Title"
+      },
+      {
+        "Name": "options",
+        "Summary": "Set to `noerror` or `noreplace` to suppress error messages when multiple displaytitles are used on one page or to make this displaytitle do nothing if a displaytitle was already specified earlier in the page."
+      }
     ]
   },
   {
     "Name": "Filepath",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Formatnum",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "FULLPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "FULLPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "Fullurl",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "action",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "action",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Gender",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "3",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "4",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "3",
+        "Summary": null
+      },
+      {
+        "Name": "4",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Grammar",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Lc",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Lcfirst",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "LOCALDAY",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALDAY2",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALDAYNAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALDOW",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALHOUR",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALMONTH",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALMONTH1",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALMONTHABBREV",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALMONTHNAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALMONTHNAMEGEN",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALTIME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALTIMESTAMP",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "Localurl",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "printable",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "printable",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "LOCALWEEK",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "LOCALYEAR",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NAMESPACE",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "NAMESPACEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NAMESPACENUMBER",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "Ns",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Nse",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "NUMBERINGROUP",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "NUMBEROFACTIVEUSERS",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFADMINS",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFARTICLES",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFEDITS",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFFILES",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFPAGES",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "NUMBEROFUSERS",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMBEROFVIEWS",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "NUMINGROUP",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": "Group name.",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": "Group name."
+      }
     ]
   },
   {
     "Name": "Padleft",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "3",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "3",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Padright",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "3",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "3",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Page name",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PAGEID",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PAGELANGUAGE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "PAGENAME",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
+  },
+  {
+    "Name": "PAGESINCAT",
+    "RedirectTarget": "PAGESINCATEGORY"
   },
   {
     "Name": "PAGESINCATEGORY",
-    "Aliases": [
-      "PAGESINCAT"
-    ],
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": "Category name.",
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": "The number of specified kind of pages only.\n`all`: all pages\n`pages`: ordinary pages (excluding subcategories and files)\n`subcats`: subcategories\n`files`: files",
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": "Category name."
+      },
+      {
+        "Name": "2",
+        "Summary": "The number of specified kind of pages only.\n`all`: all pages\n`pages`: ordinary pages (excluding subcategories and files)\n`subcats`: subcategories\n`files`: files"
+      }
     ]
   },
   {
+    "Name": "PAGESINNS",
+    "RedirectTarget": "PAGESINNAMESPACE"
+  },
+  {
     "Name": "PAGESINNAMESPACE",
-    "Aliases": [
-      "PAGESINNS"
-    ],
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PAGESIZE",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Plural",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "3",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      },
+      {
+        "Name": "3",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PROTECTIONEXPIRY",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "PROTECTIONLEVEL",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONDAY",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONDAY2",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONID",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONMONTH",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONMONTH1",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONSIZE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "REVISIONTIMESTAMP",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONUSER",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "REVISIONYEAR",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "ROOTPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "ROOTPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SCRIPTPATH",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SERVER",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SERVERNAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SITENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "STYLEPATH",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SUBJECTPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SUBJECTPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SUBJECTSPACE",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "SUBJECTSPACEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SUBPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "SUBPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "TALKPAGENAME",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "TALKPAGENAMEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "TALKSPACE",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "TALKSPACEE",
     "Summary": "Magic word.",
-    "Signatures": []
+    "Arguments": null
   },
   {
     "Name": "Uc",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Ucfirst",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      }
     ]
   },
   {
     "Name": "Urlencode",
     "Summary": "Magic word.",
-    "Signatures": [
-      [
-        {
-          "Name": "1",
-          "Summary": null,
-          "ForcePositional": true
-        },
-        {
-          "Name": "2",
-          "Summary": null,
-          "ForcePositional": true
-        }
-      ]
+    "Arguments": [
+      {
+        "Name": "1",
+        "Summary": null
+      },
+      {
+        "Name": "2",
+        "Summary": null
+      }
     ]
   }
 ]

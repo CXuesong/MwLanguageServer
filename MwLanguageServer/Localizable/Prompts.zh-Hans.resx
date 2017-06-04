@@ -127,6 +127,9 @@
     <value>或</value>
     <comment>Need spaces before and after the phrase.</comment>
   </data>
+  <data name="RedirectColon" xml:space="preserve">
+    <value>重定向：</value>
+  </data>
   <data name="UsageColon" xml:space="preserve">
     <value>用法：</value>
   </data>

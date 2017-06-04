@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MwLanguageServer", "MwLanguageServer\MwLanguageServer.csproj", "{8866A3BB-E60B-4D8F-B94C-3DE409A51A0C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MwLanguageServer.Infrastructures", "MwLanguageServer.Infrastructures\MwLanguageServer.Infrastructures.csproj", "{D2ED6A1F-D976-488A-BA84-EBDFB0BBE6F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{DFC8F4BC-B79E-4BD1-B0CE-D8FB2F3EB22D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MwLanguageServer.Store", "MwLanguageServer.Store\MwLanguageServer.Store.csproj", "{29DC09F0-358A-402C-8CE7-4AF4A8E05E02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DFC8F4BC-B79E-4BD1-B0CE-D8FB2F3EB22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFC8F4BC-B79E-4BD1-B0CE-D8FB2F3EB22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFC8F4BC-B79E-4BD1-B0CE-D8FB2F3EB22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29DC09F0-358A-402C-8CE7-4AF4A8E05E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29DC09F0-358A-402C-8CE7-4AF4A8E05E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29DC09F0-358A-402C-8CE7-4AF4A8E05E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29DC09F0-358A-402C-8CE7-4AF4A8E05E02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

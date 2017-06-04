@@ -40,8 +40,7 @@ namespace MwLanguageServer.Services
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
             ct.ThrowIfCancellationRequested();
-            var sh = doc.LintedDocument.GetSignatureHelp(position, Session.MagicTemplateInfoStore,
-                Session.PageInfoStore);
+            var sh = doc.LintedDocument.GetSignatureHelp(position, Session.PageInfoStore);
             return sh;
         }
 
@@ -82,9 +81,7 @@ namespace MwLanguageServer.Services
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
             return new CompletionList(true,
-                doc.LintedDocument.GetCompletionItems(position,
-                    Session.MagicTemplateInfoStore,
-                    Session.PageInfoStore));
+                doc.LintedDocument.GetCompletionItems(position, Session.PageInfoStore));
         }
 
     }

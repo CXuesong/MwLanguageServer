@@ -10,6 +10,7 @@ using MwLanguageServer.Localizable;
 using MwLanguageServer.Store;
 using MwParserFromScratch;
 using MwParserFromScratch.Nodes;
+using MwLanguageServer.Store.Contracts;
 
 namespace MwLanguageServer.Linter
 {
@@ -38,7 +39,6 @@ namespace MwLanguageServer.Linter
         public int InferTemplateInformation(PageInfoStore store)
         {
             if (store == null) throw new ArgumentNullException(nameof(store));
-            int ct = 0;
             // template, argument
             var dict = new Dictionary<string, Dictionary<string, TemplateArgumentInfo>>();
             foreach (var template in _Root.EnumDescendants().OfType<Template>())
@@ -76,12 +76,11 @@ namespace MwLanguageServer.Linter
                 {
                     transclusionName = ":" + p.Key;
                 }
-                if (store.UpdatePageInfo(new PageInfo(p.Key, transclusionName, Prompts.InferredPageInfo,
+                store.UpdatePageInfo(new PageInfo(p.Key, transclusionName, null, Prompts.InferredPageInfo,
                     p.Value.OrderBy(p1 => p1.Key, TemplateArgumentNameComparer.Default)
-                        .Select(p1 => p1.Value).ToArray(),
-                    isTemplate, true))) ct++;
+                        .Select(p1 => p1.Value).ToArray(), isTemplate ? PageType.Template : PageType.Page, true));
             }
-            return ct;
+            return dict.Count;
         }
 
         public Hover GetHover(Position position)
@@ -124,7 +123,7 @@ namespace MwLanguageServer.Linter
             return new Hover(string.Join(" → ", nodeTrace), focusNode.ToRange());
         }
 
-        public SignatureHelp GetSignatureHelp(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
+        public SignatureHelp GetSignatureHelp(Position position, PageInfoStore store)
         {
             var node = TraceNode(position);
             Node lastNode = null;
@@ -133,46 +132,38 @@ namespace MwLanguageServer.Linter
                 switch (node)
                 {
                     case Template template:
-                        if (template.IsMagicWord)
+                        var templateName = MwParserUtility.NormalizeTitle(template.Name);
+                        if (string.IsNullOrEmpty(templateName)) return null;
+                        // i.e. redirect target
+                        var redirectSource = store.TryGetTransclusionPageInfo(templateName);
+                        if (redirectSource == null) return null;
+                        var templateInfo = store.ResolveRedirectTarget(redirectSource);
+                        if (templateInfo == null)
                         {
-                            var info = magicStore.TryGetInfo(template.Name?.ToString().Trim());
-                            // E.g. non-existent, sharp(#)-leading template names
-                            if (info == null) return null;
-                            var help = new SignatureHelp
-                            {
-                                Signatures = info.ToSignatureInformation(),
-                                ActiveSignature = 0,
-                                ActiveParameter = -1,
-                            };
-                            // Magic Words are always positional, while it can fake "named arguments"
-                            if (lastNode is TemplateArgument arg)
-                            {
-                                var argIndex = template.Arguments.IndexOf(arg);
-                                help.ActiveSignature = info.Signatures.IndexOf(s => s.Count > argIndex);
-                                help.ActiveParameter = argIndex;
-                            }
-                            return help;
+                            templateInfo = redirectSource;
+                            redirectSource = null;
                         }
-                        else
+                        var help = new SignatureHelp
                         {
-                            var templateName = MwParserUtility.NormalizeTitle(template.Name);
-                            if (string.IsNullOrEmpty(templateName)) return null;
-                            templateName = Utility.ExpandTransclusionTitle(templateName);
-                            var templateInfo = store.TryGetPageInfo(templateName);
-                            if (templateInfo == null) return null;
-                            var help = new SignatureHelp
+                            Signatures = new[] { templateInfo.ToSignatureInformation(redirectSource) },
+                            ActiveSignature = 0,
+                            ActiveParameter = -1,
+                        };
+                        if (lastNode is TemplateArgument arg)
+                        {
+                            // Magic Words are always positional, while it can fake "named arguments"
+                            if (templateInfo.Type == PageType.MagicWord)
                             {
-                                Signatures = new[] {templateInfo.ToSignatureInformation()},
-                                ActiveSignature = 0,
-                                ActiveParameter = -1,
-                            };
-                            if (lastNode is TemplateArgument arg)
+                                var pos = template.Arguments.IndexOf(arg);
+                                help.ActiveParameter = pos;
+                            }
+                            else
                             {
                                 var argName = arg.ArgumentName();
                                 help.ActiveParameter = templateInfo.Arguments.IndexOf(p => p.Name == argName);
                             }
-                            return help;
                         }
+                        return help;
                     case WikiLink wikiLink:
                         return null;
                 }
@@ -197,7 +188,7 @@ namespace MwLanguageServer.Linter
             return TextDocument.GetRange(new Range(startPos, caretPosition));
         }
 
-        public IEnumerable<CompletionItem> GetCompletionItems(Position position, MagicTemplateInfoStore magicStore, PageInfoStore store)
+        public IEnumerable<CompletionItem> GetCompletionItems(Position position, PageInfoStore store)
         {
             var node = TraceNode(position);
             Node lastNode = null;
@@ -209,15 +200,14 @@ namespace MwLanguageServer.Linter
                         if (lastNode != null && lastNode == template.Name)
                         {
                             var enteredName = GetTypedLhsText(template.Name, position);
-                            return magicStore.GetTemplateCompletionItems(enteredName)
-                                .Concat(store.GetTemplateCompletionItems());
+                            return store.GetTransclusionCompletionItems(enteredName);
                         }
                         return null;
                     case WikiLink wikiLink:
                         if (lastNode != null && lastNode == wikiLink.Target)
                         {
                             var enteredName = GetTypedLhsText(wikiLink.Target, position);
-                            return store.GetWikiLinkCompletionItems();
+                            return store.GetWikiLinkCompletionItems(enteredName);
                         }
                         return null;
                 }

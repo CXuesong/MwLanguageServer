@@ -140,6 +140,9 @@
     <value> or </value>
     <comment>Need spaces before and after the phrase.</comment>
   </data>
+  <data name="RedirectColon" xml:space="preserve">
+    <value>Redirect: </value>
+  </data>
   <data name="TemplateArgumentNode" xml:space="preserve">
     <value>Template Argument</value>
   </data>

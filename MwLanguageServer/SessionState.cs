@@ -54,7 +54,7 @@ namespace MwLanguageServer
             if (clientProxy == null) throw new ArgumentNullException(nameof(clientProxy));
             ClientProxy = clientProxy;
             logger = loggerFactory.CreateLogger<SessionState>();
-            MagicTemplateInfoStore.LoadLocalStore();
+            PageInfoStore.LoadLocalStore();
         }
 
         public ClientProxy ClientProxy { get; }
@@ -64,8 +64,6 @@ namespace MwLanguageServer
         public LanguageServerSettings Settings { get; set; } = new LanguageServerSettings();
 
         public PageInfoStore PageInfoStore { get; } = new PageInfoStore();
-
-        public MagicTemplateInfoStore MagicTemplateInfoStore { get; } = new MagicTemplateInfoStore();
 
         public WikitextParser WiktextParser { get; } = new WikitextParser
         {

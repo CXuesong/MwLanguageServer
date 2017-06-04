@@ -56,6 +56,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MwLanguageServer.Infrastructures\MwLanguageServer.Infrastructures.csproj" />
+    <ProjectReference Include="..\MwLanguageServer.Store\MwLanguageServer.Store.csproj" />
   </ItemGroup>
 
   <ItemGroup>
