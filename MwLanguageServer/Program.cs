@@ -11,8 +11,8 @@ using Autofac;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Client;
 using JsonRpc.Standard.Contracts;
-using JsonRpc.Standard.Dataflow;
 using JsonRpc.Standard.Server;
+using JsonRpc.Streams;
 using LanguageServer.VsCode;
 using LanguageServer.VsCode.Contracts.Client;
 using Microsoft.Extensions.Configuration;
@@ -36,7 +36,7 @@ namespace MwLanguageServer
             ParameterValueConverter = new CamelCaseJsonValueConverter()
         };
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             var builder = new ContainerBuilder();
             ConfigureContainer(builder);
@@ -58,14 +58,9 @@ namespace MwLanguageServer
                 var logger = container.Resolve<ILoggerFactory>().CreateLogger("Application");
                 logger.LogInformation("Start logging.");
                 logger.LogInformation("Arguments: {arguments}", (object) args);
-                var serviceHost = container.Resolve<IJsonRpcServiceHost>();
-                var lifetime = container.Resolve<ServiceHostLifetime>();
-                using (lifetime.CancellationToken.Register(
-                    () => container.Resolve<ConsoleIoService>().ConsoleMessageSource.Complete()))
-                {
-                    lifetime.CancellationToken.WaitHandle.WaitOne();
-                }
-                logger.LogInformation("Stop logging.");
+                var result = StartServerHandler(container);
+                logger.LogInformation("Exit. Code = {code}.", result);
+                return result;
             }
         }
 
@@ -118,6 +113,8 @@ namespace MwLanguageServer
             builder.Register(ctx => ctx.Resolve<IConfiguration>()
                 .GetSection("Application")
                 .Get<ApplicationConfiguration>());
+            // JSON RPC Session
+            builder.RegisterType<SessionState>();
             // JSON RPC Client
             builder.Register(ctx => new ConsoleIoService(ctx.Resolve<ApplicationConfiguration>().Manual))
                 .SingleInstance();
@@ -128,33 +125,29 @@ namespace MwLanguageServer
             // JSON RPC Server
             builder.RegisterType<ServiceHostLifetime>().SingleInstance();
             builder.Register(ServiceHostFactory).SingleInstance();
-            builder.RegisterType<SessionStateManager>().SingleInstance();
-            builder.RegisterType<SessionState>();
             // JSON RPC Services
             foreach (var t in typeof(Program).GetTypeInfo()
                 .Assembly.ExportedTypes
                 .Where(t => t.IsAssignableTo<JsonRpcService>()))
             {
-                var rb = builder.RegisterType(t);
-                if (t.IsAssignableTo<LanguageServiceBase>())
-                    rb.OnActivated(e => ((LanguageServiceBase) e.Instance).StateManager =
-                        e.Context.Resolve<SessionStateManager>());
+                builder.RegisterType(t);
             }
         }
 
         private static JsonRpcClient RpcClientFactory(IComponentContext context)
         {
             var cio = context.Resolve<ConsoleIoService>();
-            var client = new JsonRpcClient();
-            client.Attach(cio.ConsoleMessageSource, cio.ConsoleMessageTarget);
+            var handler = new StreamRpcClientHandler();
+            var disposable = handler.Attach(cio.ConsoleMessageReader, cio.ConsoleMessageWriter);
+            var client = new JsonRpcClient(handler);
             if (context.Resolve<ApplicationConfiguration>().Debug)
             {
                 var logger = context.Resolve<ILoggerFactory>().CreateLogger("CLIENT");
-                client.MessageSending += (_, e) =>
+                handler.MessageSending += (_, e) =>
                 {
                     logger.LogTrace("< {@Request}", e.Message);
                 };
-                client.MessageReceiving += (_, e) =>
+                handler.MessageReceiving += (_, e) =>
                 {
                     logger.LogTrace("> {@Response}", e.Message);
                 };
@@ -164,16 +157,13 @@ namespace MwLanguageServer
 
         private static IJsonRpcServiceHost ServiceHostFactory(IComponentContext context)
         {
-            var builder = new ServiceHostBuilder
+            var builder = new JsonRpcServiceHostBuilder
             {
                 ContractResolver = myContractResolver,
-                Session = new Session(),
-                Options = JsonRpcServiceHostOptions.ConsistentResponseSequence,
                 LoggerFactory = context.Resolve<ILoggerFactory>(),
                 ServiceFactory = new AutofacServiceFactory(context.Resolve<ILifetimeScope>())
             };
             builder.Register(typeof(Program).GetTypeInfo().Assembly);
-            builder.UseCancellationHandling();
             if (context.Resolve<ApplicationConfiguration>().Debug)
             {
                 var logger = context.Resolve<ILoggerFactory>().CreateLogger("SERVER");
@@ -185,10 +175,25 @@ namespace MwLanguageServer
                     logger.LogTrace("< {@Response}", ctx.Response);
                 });
             }
-            var host = builder.Build();
+            builder.UseCancellationHandling();
+            return builder.Build();
+        }
+
+        private static int StartServerHandler(IComponentContext context)
+        {
+            var serviceHost = context.Resolve<IJsonRpcServiceHost>();
+            var handler = new StreamRpcServerHandler(serviceHost,
+                StreamRpcServerHandlerOptions.ConsistentResponseSequence |
+                StreamRpcServerHandlerOptions.SupportsRequestCancellation);
+            var state = context.Resolve<SessionState>();
+            handler.DefaultFeatures.Set<ISessionStateFeature>(new SessionStateFeature(state));
             var cio = context.Resolve<ConsoleIoService>();
-            host.Attach(cio.ConsoleMessageSource, cio.ConsoleMessageTarget);
-            return host;
+            using (handler.Attach(cio.ConsoleMessageReader, cio.ConsoleMessageWriter))
+            {
+                var lifetime = context.Resolve<ServiceHostLifetime>();
+                lifetime.CancellationToken.WaitHandle.WaitOne();
+            }
+            return 0;
         }
     }
 }

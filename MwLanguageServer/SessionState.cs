@@ -21,6 +21,25 @@ using MwParserFromScratch.Nodes;
 
 namespace MwLanguageServer
 {
+
+    public interface ISessionStateFeature
+    {
+        SessionState State { get; }
+    }
+
+    internal class SessionStateFeature : ISessionStateFeature
+    {
+
+        public SessionStateFeature(SessionState state)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            State = state;
+        }
+
+        /// <inheritdoc />
+        public SessionState State { get; }
+    }
+
     public class SessionState
     {
         private readonly ILoggerFactory loggerFactory;
@@ -107,30 +126,6 @@ namespace MwLanguageServer
             }
         }
 
-    }
-
-    public class SessionStateManager
-    {
-
-        public SessionStateManager(IComponentContext context)
-        {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            Context = context;
-        }
-
-        private readonly ConcurrentDictionary<string, SessionState> stateDict =
-            new ConcurrentDictionary<string, SessionState>();
-
-        public IComponentContext Context { get; }
-
-        /// <summary>
-        /// Gets or creates a <see cref="SessionState"/> for the specified session.
-        /// </summary>
-        public SessionState GetState(ISession session)
-        {
-            if (session == null) throw new ArgumentNullException(nameof(session));
-            return stateDict.GetOrAdd(session.Id, k => Context.Resolve<SessionState>());
-        }
     }
 
     /// <summary>

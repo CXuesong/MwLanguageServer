@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
-using System.Threading.Tasks.Dataflow;
 using JsonRpc.Standard;
-using JsonRpc.Standard.Dataflow;
+using JsonRpc.Streams;
 
 namespace MwLanguageServer
 {
@@ -17,36 +16,28 @@ namespace MwLanguageServer
         {
             if (manualIo)
             {
-                ConsoleMessageSource = new ByLineTextMessageSourceBlock(Console.In);
-                ConsoleMessageTarget = new ByLineTextMessageTargetBlock(Console.Out);
-                ConsoleIn = null;
-                ConsoleOut = null;
+                ConsoleMessageReader = new ByLineTextMessageReader(Console.In);
+                ConsoleMessageWriter = new ByLineTextMessageWriter(Console.Out);
             }
             else
             {
                 var cin = Console.OpenStandardInput();
-                ConsoleIn = new BufferedStream(cin);
-                ConsoleOut = Console.OpenStandardOutput();
-                ConsoleMessageSource = new PartwiseStreamMessageSourceBlock(ConsoleIn);
-                ConsoleMessageTarget = new PartwiseStreamMessageTargetBlock(ConsoleOut);
+                var bcin = new BufferedStream(cin);
+                var cout = Console.OpenStandardOutput();
+                ConsoleMessageReader = new PartwiseStreamMessageReader(bcin);
+                ConsoleMessageWriter = new PartwiseStreamMessageWriter(cout);
             }
         }
 
-        private Stream ConsoleIn { get; }
+        public MessageReader ConsoleMessageReader { get; }
 
-        private Stream ConsoleOut { get; }
-
-        public ISourceBlock<Message> ConsoleMessageSource { get; }
-
-        public ITargetBlock<Message> ConsoleMessageTarget { get; }
+        public MessageWriter ConsoleMessageWriter { get; }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            ConsoleMessageSource.Complete();
-            ConsoleMessageTarget.Complete();
-            ConsoleIn?.Dispose();
-            ConsoleOut?.Dispose();
+            ConsoleMessageReader.Dispose();
+            ConsoleMessageWriter.Dispose();
         }
     }
 }

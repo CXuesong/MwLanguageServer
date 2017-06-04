@@ -7,8 +7,7 @@ namespace MwLanguageServer.Services
 {
     public class LanguageServiceBase : JsonRpcService
     {
-        internal SessionStateManager StateManager { get; set; }
 
-        protected SessionState Session => StateManager.GetState(RequestContext.Session);
+        protected SessionState Session => RequestContext.Features.Get<ISessionStateFeature>().State;
     }
 }

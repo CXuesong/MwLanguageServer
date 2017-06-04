@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using JsonRpc.Standard;
 using JsonRpc.Standard.Contracts;
+using JsonRpc.Standard.Server;
 using LanguageServer.VsCode.Contracts;
 using LanguageServer.VsCode.Contracts.Client;
 using Newtonsoft.Json.Linq;
@@ -59,7 +60,7 @@ namespace MwLanguageServer.Services
         [JsonRpcMethod("$/cancelRequest", IsNotification = true)]
         public void CancelRequest(MessageId id)
         {
-            RequestContext.ServiceHost.TryCancelRequest(id);
+            RequestContext.Features.Get<IRequestCancellationFeature>().TryCancel(id);
         }
     }
 }
