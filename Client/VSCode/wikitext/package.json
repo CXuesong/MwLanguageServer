@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "publisher": "cxuesong",
     "engines": {
-        "vscode": "^1.11.0"
+        "vscode": "^1.18.0"
     },
     "categories": [
         "Languages",
@@ -67,6 +67,66 @@
         "@types/mocha": "^2.2.32"
     },
     "dependencies": {
-        "vscode-languageclient": "^3.2.2"
-    }
+        "vscode-languageclient": "^3.2.2",
+        "http-proxy-agent": "^2.0.0",
+        "https-proxy-agent": "^2.1.1",
+        "tmp": "0.0.33"
+    },
+    "runtimeDependencies": [
+        {
+            "description": "Wikitext Language Server for Windows (x86)",
+            "url": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/win32_x86.zip",
+            "fallbackUrl": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/win32_x86.zip",
+            "installPath": ".server",
+            "platforms": [
+                "win32"
+            ],
+            "architectures": [
+                "x86"
+            ],
+            "installTestPath": "./.server/MwLanguageServer.exe"
+        },
+        {
+            "description": "Wikitext Language Server for Windows (x64)",
+            "url": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/win32_x64.zip",
+            "fallbackUrl": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/win32_x64.zip",
+            "installPath": ".server",
+            "platforms": [
+                "win32"
+            ],
+            "architectures": [
+                "x86_64"
+            ],
+            "installTestPath": "./.server/MwLanguageServer.exe"
+        },
+        {
+            "description": "Wikitext Language Server for macOS (x64)",
+            "url": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/darwin_x64.zip",
+            "fallbackUrl": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/darwin_x64.zip",
+            "installPath": ".server",
+            "platforms": [
+                "darwin"
+            ],
+            "binaries": [
+                "./MwLanguageServer"
+            ],
+            "installTestPath": "./.server/MwLanguageServer"
+        },
+        {
+            "description": "Wikitext Language Server for Linux (x64)",
+            "url": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/linux_x64.zip",
+            "fallbackUrl": "https://github.com/CXuesong/MwLanguageServer/releases/download/v0.1/linux_x64.zip",
+            "installPath": ".server",
+            "platforms": [
+                "linux"
+            ],
+            "architectures": [
+                "x86_64"
+            ],
+            "binaries": [
+                "./MwLanguageServer"
+            ],
+            "installTestPath": "./.server/MwLanguageServer"
+        }
+    ]
 }

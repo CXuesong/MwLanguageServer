@@ -6,10 +6,58 @@ import * as vscode from "vscode";
 import * as languageClient from "vscode-languageclient";
 import * as path from "path";
 import * as fs from "fs";
+import * as util from './common';
+import { Logger } from "./logger";
+import { ExtensionDownloader } from "./ExtensionDownloader";
+
+let _channel: vscode.OutputChannel = null;
+
+// this method is called when your extension is activated
+// your extension is activated the very first time the command is executed
+export async function activate(context: vscode.ExtensionContext) {
+	console.log('wikitext extension is now activated.');
+	
+	const extensionId = 'lextudio.restructuredtext';
+    const extension = vscode.extensions.getExtension(extensionId);
+
+	util.setExtensionPath(extension.extensionPath);
+	
+	_channel = vscode.window.createOutputChannel("Wikitext");
+
+    let logger = new Logger(text => _channel.append(text));
+
+	// Uncomment this before shipping.
+    // let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
+
+	activateLanguageServer(context);
+
+	// The command has been defined in the package.json file
+	let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
+		// The code you place here will be executed every time your command is executed
+
+		// Display a message box to the user
+		vscode.window.showInformationMessage('Hello World!');
+	});
+
+	context.subscriptions.push(disposable);
+}
+
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
+    return util.installFileExists(util.InstallFileType.Lock)
+        .then(exists => {
+            if (!exists) {
+                const downloader = new ExtensionDownloader(_channel, logger, extension.packageJSON);
+                return downloader.installRuntimeDependencies();
+            } else {
+                return true;
+            }
+        });
+}
 
 const languageServerPaths = [
-	"server/MwLanguageServer.dll",
-	"../../../MwLanguageServer/bin/Debug/netcoreapp1.1/MwLanguageServer.dll",
+	".server/MwLanguageServer.exe",
+	".server/MwLanguageServer",
+	"../../../MwLanguageServer/bin/Debug/netcoreapp2.0/MwLanguageServer.dll"
 ]
 
 function activateLanguageServer(context: vscode.ExtensionContext) {
@@ -25,7 +73,7 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 			break;
 		}
 	}
-	if (!serverModule) throw new URIError("Cannot find MwLanguageServer.dll.");
+	if (!serverModule) throw new URIError("Cannot find MwLanguageServer.");
 	let workPath = path.dirname(serverModule);
 	console.log(`Use ${serverModule} as server module.`);
 	console.log(`Work path: ${workPath}.`);
@@ -34,9 +82,19 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
 	let serverOptions: languageClient.ServerOptions = {
-		run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
-		debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
+		run: { command: serverModule, args: [], options: { cwd: workPath } },
+		debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
 	}
+
+	// For debugging only.
+	if (serverModule.indexOf(".dll") > -1)
+	{
+		serverOptions = {
+			run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
+			debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
+		}
+	}
+
 	// Options to control the language client
 	let clientOptions: languageClient.LanguageClientOptions = {
 		// Register the server for plain text documents
@@ -55,24 +113,6 @@ function activateLanguageServer(context: vscode.ExtensionContext) {
 
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
-	context.subscriptions.push(disposable);
-}
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-	console.log('wikitext extension is now activated.');
-
-	activateLanguageServer(context);
-
-	// The command has been defined in the package.json file
-	let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World!');
-	});
-
 	context.subscriptions.push(disposable);
 }
 
