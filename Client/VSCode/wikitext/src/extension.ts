@@ -17,7 +17,7 @@ let _channel: vscode.OutputChannel = null;
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('wikitext extension is now activated.');
 	
-	const extensionId = 'lextudio.restructuredtext';
+	const extensionId = 'cxuesong.wikitext';
     const extension = vscode.extensions.getExtension(extensionId);
 
 	util.setExtensionPath(extension.extensionPath);
