@@ -34,7 +34,7 @@ namespace MwLanguageServer.Linter
         public ICollection<Diagnostic> Diagnostics { get; }
 
         /// <summary>
-        /// Inferss linked/transcluded pages information, and stores it into global store.
+        /// Infers linked/transcluded pages information, and stores it into global store.
         /// </summary>
         public int InferTemplateInformation(PageInfoStore store)
         {
@@ -176,10 +176,8 @@ namespace MwLanguageServer.Linter
         /// <summary>
         /// Gets the text to the left-hand-side of the cart. Used for auto-completion.
         /// </summary>
-        private string GetTypedLhsText(InlineContainer node, Position caretPosition)
+        private string GetTypedLhsText(PlainText node, Position caretPosition)
         {
-            var firstPt = node?.Inlines.FirstNode as PlainText;
-            if (firstPt == null) return null;
             IWikitextLineInfo li = node;
             Debug.Assert(li.HasLineInfo);
             var startPos = new Position(li.StartLineNumber, li.StartLinePosition);
@@ -188,33 +186,58 @@ namespace MwLanguageServer.Linter
             return TextDocument.GetRange(new Range(startPos, caretPosition));
         }
 
-        public IEnumerable<CompletionItem> GetCompletionItems(Position position, PageInfoStore store)
+        private static readonly char[] whitespaceCharsWithUnderscore = {' ', '\t', '\v', '\r', '\n', '_'};
+
+        public (IEnumerable<CompletionItem> items, bool isIncomplete)
+            GetCompletionItems(Position position, PageInfoStore store)
         {
-            var node = TraceNode(position);
+            var innermostNode = TraceNode(position);
+            var innermostPlainText = innermostNode as PlainText;
+            var node = innermostNode;
             Node lastNode = null;
+            // ... when the innermostPlainText is also the first node of all parent nodes
+            var isSimpleIdentifier = innermostPlainText != null;
+            // Trace the node from innermost to outermost.
             while (node != null)
             {
+                isSimpleIdentifier = isSimpleIdentifier
+                                     && (node is PlainText
+                                         || node is InlineContainer ic && lastNode == ic.Inlines.FirstNode);
                 switch (node)
                 {
                     case Template template:
-                        if (lastNode != null && lastNode == template.Name)
+                        if (isSimpleIdentifier && lastNode == template.Name)
                         {
-                            var enteredName = GetTypedLhsText(template.Name, position);
-                            return store.GetTransclusionCompletionItems(enteredName);
+                            var enteredName = MwParserUtility.NormalizeTitle(GetTypedLhsText(innermostPlainText, position));
+                            return (store.GetTransclusionCompletionItems(enteredName), true);
                         }
-                        return null;
+                        return (null, false);
+                    case TemplateArgument argument:
+                        // Do not show auto-completion for obvious argument values.
+                        if (isSimpleIdentifier && (
+                                lastNode == argument.Name // | abc$ = def
+                                || argument.Name == null && lastNode == argument.Value // Anonymous argument, or unfinished argument name
+                            ))
+                        {
+                            var template = (Template)argument.ParentNode;
+                            var templateInfo = store.TryGetTransclusionPageInfo(MwParserUtility.NormalizeTitle(template.Name));
+                            return (templateInfo.Arguments
+                                    .Select(a => new CompletionItem(a.Name, CompletionItemKind.Property, a.Summary, a.Name + "=")),
+                                false);
+                        }
+                        return (null, false);
                     case WikiLink wikiLink:
-                        if (lastNode != null && lastNode == wikiLink.Target)
+                        if (isSimpleIdentifier && lastNode == wikiLink.Target)
                         {
-                            var enteredName = GetTypedLhsText(wikiLink.Target, position);
-                            return store.GetWikiLinkCompletionItems(enteredName);
+                            var enteredName = MwParserUtility.NormalizeTitle(GetTypedLhsText(innermostPlainText, position));
+                            return (store.GetWikiLinkCompletionItems(enteredName), true);
                         }
-                        return null;
+                        return (null, false);
                 }
                 lastNode = node;
                 node = node.ParentNode;
             }
-            return null;
+            return (null, false);
         }
 
         private Node TraceNode(Position position)

@@ -20,11 +20,11 @@
   },
   {
     "Name": "#expr",
-    "Summary": "Evaluates expression.",
+    "Summary": "Evaluates a mathematical expression and returns the calculated value.",
     "Arguments": [
       {
         "Name": "expression",
-        "Summary": null
+        "Summary": "The expression to evaluate."
       }
     ]
   },

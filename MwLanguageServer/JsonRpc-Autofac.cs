@@ -7,6 +7,9 @@ using JsonRpc.Standard.Server;
 
 namespace MwLanguageServer
 {
+    /// <summary>
+    /// Uses AutoFac to resolve <see cref="JsonRpcService"/> instances.
+    /// </summary>
     public class AutofacServiceFactory : IServiceFactory
     {
 

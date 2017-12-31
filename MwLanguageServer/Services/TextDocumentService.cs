@@ -80,8 +80,8 @@ namespace MwLanguageServer.Services
         {
             var doc = Session.DocumentStates[textDocument.Uri];
             await doc.AnalyzeAsync(ct);
-            return new CompletionList(true,
-                doc.LintedDocument.GetCompletionItems(position, Session.PageInfoStore));
+            var (items, isIncomplete) = doc.LintedDocument.GetCompletionItems(position, Session.PageInfoStore);
+            return new CompletionList(items, isIncomplete);
         }
 
     }

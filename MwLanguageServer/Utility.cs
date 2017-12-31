@@ -80,6 +80,17 @@ namespace MwLanguageServer
             return -1;
         }
 
+        public static bool IsOrIsAncestorOf(this Node ancestor, Node descendant)
+        {
+            if (ancestor == null) throw new ArgumentNullException(nameof(ancestor));
+            while (descendant != null)
+            {
+                if (ancestor == descendant) return true;
+                descendant = descendant.ParentNode;
+            }
+            return false;
+        }
+
         public static string EscapeMd(string text)
         {
             if (string.IsNullOrEmpty(text)) return "";
@@ -148,6 +159,9 @@ namespace MwLanguageServer
             return label;
         }
 
+        /// <summary>
+        /// Expands Abc as in {{Abc}} to Template:Abc.
+        /// </summary>
         public static string ExpandTransclusionTitle(string title)
         {
             if (title == null) throw new ArgumentNullException(nameof(title));
