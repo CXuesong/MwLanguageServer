@@ -37,9 +37,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="CXuesong.JsonRpc.DynamicProxy" Version="0.4.0-int0" />
-    <PackageReference Include="CXuesong.JsonRpc.Streams" Version="0.4.0-int0" />
-    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.2.0-int0" />
+    <PackageReference Include="CXuesong.JsonRpc.Streams" Version="0.4.0" />
+    <PackageReference Include="CXuesong.LanguageServer.VsCode" Version="0.2.0" />
     <PackageReference Include="CXuesong.MW.MwParserFromScratch" Version="0.2.0" />
     <PackageReference Include="CXuesong.MW.WikiClientLibrary" Version="0.6.0-intX5" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />

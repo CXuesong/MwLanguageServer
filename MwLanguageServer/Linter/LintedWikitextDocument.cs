@@ -197,16 +197,17 @@ namespace MwLanguageServer.Linter
             Node lastNode = null;
             // ... when the innermostPlainText is also the first node of all parent nodes
             var isSimpleIdentifier = innermostPlainText != null;
+            var lastNodeIsSimpleIdentifier = isSimpleIdentifier;
             // Trace the node from innermost to outermost.
             while (node != null)
             {
+                lastNodeIsSimpleIdentifier = isSimpleIdentifier;
                 isSimpleIdentifier = isSimpleIdentifier
-                                     && (node is PlainText
-                                         || node is InlineContainer ic && lastNode == ic.Inlines.FirstNode);
+                                     && (node is PlainText || lastNode.PreviousNode == null);
                 switch (node)
                 {
                     case Template template:
-                        if (isSimpleIdentifier && lastNode == template.Name)
+                        if (lastNodeIsSimpleIdentifier && lastNode == template.Name)
                         {
                             var enteredName = MwParserUtility.NormalizeTitle(GetTypedLhsText(innermostPlainText, position));
                             return (store.GetTransclusionCompletionItems(enteredName), true);
@@ -214,7 +215,7 @@ namespace MwLanguageServer.Linter
                         return (null, false);
                     case TemplateArgument argument:
                         // Do not show auto-completion for obvious argument values.
-                        if (isSimpleIdentifier && (
+                        if (lastNodeIsSimpleIdentifier && (
                                 lastNode == argument.Name // | abc$ = def
                                 || argument.Name == null && lastNode == argument.Value // Anonymous argument, or unfinished argument name
                             ))
@@ -227,7 +228,7 @@ namespace MwLanguageServer.Linter
                         }
                         return (null, false);
                     case WikiLink wikiLink:
-                        if (isSimpleIdentifier && lastNode == wikiLink.Target)
+                        if (lastNodeIsSimpleIdentifier && lastNode == wikiLink.Target)
                         {
                             var enteredName = MwParserUtility.NormalizeTitle(GetTypedLhsText(innermostPlainText, position));
                             return (store.GetWikiLinkCompletionItems(enteredName), true);
